@@ -1,6 +1,6 @@
 <!-- @format -->
 
-# proyecto-santiago
+# RC-SERVICE
 
 Este es un proyecto que usa Node.js, Express, MongoDB y otras dependencias para crear una aplicación web.
 
