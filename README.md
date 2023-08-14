@@ -18,7 +18,7 @@ Para configurar el proyecto, necesitas crear un archivo llamado `.env` en la ra�
 
 ```dotenv
 PORT= El puerto donde se ejecutará tu aplicación (por ejemplo, 3000)
-MONGODB_URI= La cadena de conexión a tu base de datos MongoDB (por ejemplo, mongodb://localhost/testname)
+MG_DATABASE_LINK= La cadena de conexión a tu base de datos MongoDB (por ejemplo, mongodb://localhost/testname)
 ```
 
 ## Uso
