@@ -37,11 +37,13 @@ async function enviarMensaje(numero, mensaje) {
 			console.log("Mensaje enviado:", mensaje);
 			setTimeout(() => {
 				client.destroy();
-			}, 10000);
+			}, 5000);
 		});
 	} catch (error) {
 		console.error("Error al enviar el mensaje:", error);
+		return false;
 	}
+	return true;
 }
 
 module.exports = enviarMensaje;
