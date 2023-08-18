@@ -118,6 +118,19 @@ async function revokeRoleFromUser(userId) {
 	}
 }
 
+/** Obtener el rol por su ID */
+async function getRoleById(roleId) {
+	try {
+		const role = await db.Role.findById(roleId);
+		if (!role) {
+			throw new Error("Role not found");
+		}
+		return role;
+	} catch (error) {
+		throw error;
+	}
+}
+
 /** Obtener todos los permisos de un usuario */
 async function getAllPermisosByUser(userId) {
 	try {
@@ -131,6 +144,68 @@ async function getAllPermisosByUser(userId) {
 	}
 }
 
+async function getUsuariosPorRol(rolId) {
+	try {
+		const usuarios = await db.User.find({ rol: rolId });
+		return usuarios;
+	} catch (error) {
+		throw error;
+	}
+}
+async function getUsuariosPorPermiso(permisoId) {
+	try {
+		const usuariosPermisos = await db.RolesPermisos.find({
+			id_permiso: permisoId,
+		});
+		const usuariosIds = usuariosPermisos.map((item) => item.id_usuario);
+		const usuarios = await db.User.find({ _id: { $in: usuariosIds } });
+		return usuarios;
+	} catch (error) {
+		throw error;
+	}
+}
+async function getListaRolesUsuarios() {
+	try {
+		const roles = await db.Role.find();
+		const listaRolesUsuarios = [];
+
+		for (const rol of roles) {
+			const usuarios = await db.User.find({ rol: rol._id });
+			listaRolesUsuarios.push({
+				rol: rol,
+				usuarios: usuarios,
+			});
+		}
+
+		return listaRolesUsuarios;
+	} catch (error) {
+		throw error;
+	}
+}
+
+async function getListaPermisosUsuarios() {
+	try {
+		const permisos = await db.Permiso.find();
+		const listaPermisosUsuarios = [];
+
+		for (const permiso of permisos) {
+			const usuariosPermisos = await db.RolesPermisos.find({
+				id_permiso: permiso._id,
+			});
+			const usuariosIds = usuariosPermisos.map((item) => item.id_usuario);
+			const usuarios = await db.User.find({ _id: { $in: usuariosIds } });
+
+			listaPermisosUsuarios.push({
+				permiso: permiso,
+				usuarios: usuarios,
+			});
+		}
+
+		return listaPermisosUsuarios;
+	} catch (error) {
+		throw error;
+	}
+}
 module.exports = {
 	getAllRoles,
 	getAllPermisos,
@@ -141,4 +216,9 @@ module.exports = {
 	assignRoleToUser,
 	revokeRoleFromUser,
 	getAllPermisosByUser,
+	getRoleById,
+	getUsuariosPorRol,
+	getUsuariosPorPermiso,
+	getListaRolesUsuarios,
+	getListaPermisosUsuarios,
 };

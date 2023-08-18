@@ -30,6 +30,44 @@ router.get("/permisos", async (req, res) => {
 	}
 });
 
+router.get("/usuarios-por-rol/:rolId", async (req, res) => {
+	try {
+		const rolId = req.params.rolId;
+		const usuarios = await rolQueries.getUsuariosPorRol(rolId);
+		res.status(200).json(usuarios);
+	} catch (error) {
+		res.status(500).json({ error: error.message });
+	}
+});
+router.get("/usuarios-por-permiso/:permisoId", async (req, res) => {
+	try {
+		const permisoId = req.params.permisoId;
+		const usuarios = await rolQueries.getUsuariosPorPermiso(permisoId);
+		res.status(200).json(usuarios);
+	} catch (error) {
+		res.status(500).json({ error: error.message });
+	}
+});
+
+router.get("/lista-roles-usuarios", async (req, res) => {
+	try {
+		const listaRolesUsuarios = await rolQueries.getListaRolesUsuarios();
+		res.status(200).json(listaRolesUsuarios);
+	} catch (error) {
+		res.status(500).json({ error: error.message });
+	}
+});
+
+router.get("/lista-permisos-usuarios", async (req, res) => {
+	try {
+		const listaPermisosUsuarios =
+			await rolQueries.getListaPermisosUsuarios();
+		res.status(200).json(listaPermisosUsuarios);
+	} catch (error) {
+		res.status(500).json({ error: error.message });
+	}
+});
+
 // Ruta para crear un nuevo rol
 router.post("/roles", validateRole, async (req, res) => {
 	try {

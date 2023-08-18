@@ -7,22 +7,28 @@ async function createUser(data) {
 	try {
 		const userRole = await db.Role.findOne({ nombreRol: "User" });
 		const readPermission = await db.Permiso.findOne({ permiso: "Read" });
-
 		if (!userRole || !readPermission) {
 			throw new Error("The User role or Read permission is not created");
 		}
-
 		const user = await db.User.create({
 			...data,
 			rol: userRole._id,
 		});
-
 		await db.RolesPermisos.create({
 			id_usuario: user._id,
 			id_permiso: readPermission._id,
 		});
-
 		return user;
+	} catch (error) {
+		throw error;
+	}
+}
+
+/** Obtener todos los usuarios sin incluir la contraseña */
+async function getAllUsersWithoutPasswords() {
+	try {
+		const users = await db.User.find().populate("rol").select("correo rol");
+		return users;
 	} catch (error) {
 		throw error;
 	}
@@ -41,7 +47,7 @@ async function getAllUsers() {
 /**  Obtener un usuario por su correo*/
 const getUserByCorreo = async (correo) => {
 	try {
-		const user = await db.User.findOne({ correo: correo });
+		const user = await db.User.findOne({ correo: correo }).populate("rol");
 		return user;
 	} catch (error) {
 		throw error;
@@ -87,4 +93,5 @@ module.exports = {
 	updateUser,
 	deleteUser,
 	getUserByCorreo,
+	getAllUsersWithoutPasswords,
 };

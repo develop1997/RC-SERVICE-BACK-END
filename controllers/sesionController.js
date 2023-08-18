@@ -15,8 +15,18 @@ router.post("/", validateUser, async (req, res) => {
 	}
 });
 
-// Route to get all users
+// Route to get all users Without Passwords
 router.get("/", async (req, res) => {
+	try {
+		const users = await queries.getAllUsersWithoutPasswords();
+		res.status(200).json(users);
+	} catch (error) {
+		res.status(500).json({ error: error.message });
+	}
+});
+
+// Route to get all users
+router.get("/all", async (req, res) => {
 	try {
 		const users = await queries.getAllUsers();
 		res.status(200).json(users);
