@@ -144,26 +144,6 @@ async function getAllPermisosByUser(userId) {
 	}
 }
 
-async function getUsuariosPorRol(rolId) {
-	try {
-		const usuarios = await db.User.find({ rol: rolId });
-		return usuarios;
-	} catch (error) {
-		throw error;
-	}
-}
-async function getUsuariosPorPermiso(permisoId) {
-	try {
-		const usuariosPermisos = await db.RolesPermisos.find({
-			id_permiso: permisoId,
-		});
-		const usuariosIds = usuariosPermisos.map((item) => item.id_usuario);
-		const usuarios = await db.User.find({ _id: { $in: usuariosIds } });
-		return usuarios;
-	} catch (error) {
-		throw error;
-	}
-}
 async function getListaRolesUsuarios() {
 	try {
 		const roles = await db.Role.find();
