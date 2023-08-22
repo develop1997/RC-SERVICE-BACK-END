@@ -197,8 +197,6 @@ module.exports = {
 	revokeRoleFromUser,
 	getAllPermisosByUser,
 	getRoleById,
-	getUsuariosPorRol,
-	getUsuariosPorPermiso,
 	getListaRolesUsuarios,
 	getListaPermisosUsuarios,
 };
