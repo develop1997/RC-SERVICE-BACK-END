@@ -8,7 +8,7 @@ const {
 	validateAssignPermisoToUser,
 	validateAssignRoleToUser,
 } = require("../validations/sesionValidations");
-const { translateString } = require("../utils/Functions");
+const translateString = require("../utils/Functions");
 const router = express.Router();
 
 // Ruta para obtener todos los roles

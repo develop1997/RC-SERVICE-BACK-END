@@ -4,6 +4,7 @@ const express = require("express");
 const router = express.Router();
 const { validateUser } = require("../validations/sesionValidations");
 const queries = require("../queries/sesionQueries");
+const translateString = require("../utils/Functions");
 
 // Route to create a new user
 router.post("/", validateUser, async (req, res) => {

@@ -1,6 +1,6 @@
 /** @format */
 
-export async function translateString(inputString) {
+async function translateString(inputString) {
 	const sourceLanguage = "en";
 	const targetLanguage = "es";
 
@@ -19,3 +19,5 @@ export async function translateString(inputString) {
 		return inputString;
 	}
 }
+
+module.exports = translateString;
