@@ -8,6 +8,7 @@ const {
 	validateAssignPermisoToUser,
 	validateAssignRoleToUser,
 } = require("../validations/sesionValidations");
+const { translateString } = require("../utils/Functions");
 const router = express.Router();
 
 // Ruta para obtener todos los roles
@@ -16,7 +17,8 @@ router.get("/roles", async (req, res) => {
 		const roles = await rolQueries.getAllRoles();
 		res.status(200).json(roles);
 	} catch (error) {
-		res.status(500).json({ error: error.message });
+		let translatedError = await translateString(error.message);
+		res.status(500).json({ error: translatedError });
 	}
 });
 
@@ -26,7 +28,8 @@ router.get("/permisos", async (req, res) => {
 		const permisos = await rolQueries.getAllPermisos();
 		res.status(200).json(permisos);
 	} catch (error) {
-		res.status(500).json({ error: error.message });
+		let translatedError = await translateString(error.message);
+		res.status(500).json({ error: translatedError });
 	}
 });
 
@@ -35,7 +38,8 @@ router.get("/lista-roles-usuarios", async (req, res) => {
 		const listaRolesUsuarios = await rolQueries.getListaRolesUsuarios();
 		res.status(200).json(listaRolesUsuarios);
 	} catch (error) {
-		res.status(500).json({ error: error.message });
+		let translatedError = await translateString(error.message);
+		res.status(500).json({ error: translatedError });
 	}
 });
 
@@ -45,7 +49,8 @@ router.get("/lista-permisos-usuarios", async (req, res) => {
 			await rolQueries.getListaPermisosUsuarios();
 		res.status(200).json(listaPermisosUsuarios);
 	} catch (error) {
-		res.status(500).json({ error: error.message });
+		let translatedError = await translateString(error.message);
+		res.status(500).json({ error: translatedError });
 	}
 });
 
@@ -55,7 +60,8 @@ router.post("/roles", validateRole, async (req, res) => {
 		const newRole = await rolQueries.createRole(req.body);
 		res.status(201).json(newRole);
 	} catch (error) {
-		res.status(500).json({ error: error.message });
+		let translatedError = await translateString(error.message);
+		res.status(500).json({ error: translatedError });
 	}
 });
 
@@ -65,7 +71,8 @@ router.post("/permisos", validatePermiso, async (req, res) => {
 		const newPermiso = await rolQueries.createPermiso(req.body);
 		res.status(201).json(newPermiso);
 	} catch (error) {
-		res.status(500).json({ error: error.message });
+		let translatedError = await translateString(error.message);
+		res.status(500).json({ error: translatedError });
 	}
 });
 
@@ -81,7 +88,8 @@ router.post(
 			);
 			res.status(201).json(rolesPermisos);
 		} catch (error) {
-			res.status(500).json({ error: error.message });
+			let translatedError = await translateString(error.message);
+			res.status(500).json({ error: translatedError });
 		}
 	}
 );
@@ -98,7 +106,8 @@ router.post(
 			);
 			res.status(200).json(user);
 		} catch (error) {
-			res.status(500).json({ error: error.message });
+			let translatedError = await translateString(error.message);
+			res.status(500).json({ error: translatedError });
 		}
 	}
 );
@@ -112,7 +121,8 @@ router.delete("/usuarios/:userId/permisos/:permisoId", async (req, res) => {
 		);
 		res.status(200).json(deletedRolesPermisos);
 	} catch (error) {
-		res.status(500).json({ error: error.message });
+		let translatedError = await translateString(error.message);
+		res.status(500).json({ error: translatedError });
 	}
 });
 
@@ -122,7 +132,8 @@ router.delete("/usuarios/:userId/roles", async (req, res) => {
 		const user = await rolQueries.revokeRoleFromUser(req.params.userId);
 		res.status(200).json(user);
 	} catch (error) {
-		res.status(500).json({ error: error.message });
+		let translatedError = await translateString(error.message);
+		res.status(500).json({ error: translatedError });
 	}
 });
 
@@ -134,7 +145,8 @@ router.get("/usuarios/:userId/permisos", async (req, res) => {
 		);
 		res.status(200).json(permisos);
 	} catch (error) {
-		res.status(500).json({ error: error.message });
+		let translatedError = await translateString(error.message);
+		res.status(500).json({ error: translatedError });
 	}
 });
 

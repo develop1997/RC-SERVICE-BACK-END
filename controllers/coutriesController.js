@@ -27,7 +27,7 @@ router.get("/", (req, res) => {
 /**
  * Get information about a specific country using its alpha3Code.
  */
-router.get("/:alpha3Code", (req, res) => {
+router.get("/:alpha3Code", async  (req, res) => {
 	const alpha3Code = req.params.alpha3Code;
 	const country = countries.find(
 		(country) => country.alpha3Code === alpha3Code
@@ -36,14 +36,14 @@ router.get("/:alpha3Code", (req, res) => {
 	if (country) {
 		res.json(country);
 	} else {
-		res.status(404).json({ message: "Country not found" });
+		res.status(404).json({ message: "Ciudad no encontrada" });
 	}
 });
 
 /**
  * Search for countries by name.
  */
-router.get("/search/:searchTerm", (req, res) => {
+router.get("/search/:searchTerm", async  (req, res) => {
 	const searchTerm = req.params.searchTerm.toLowerCase();
 	const matchingCountries = countries.filter((country) =>
 		country.name.toLowerCase().includes(searchTerm)
@@ -55,7 +55,7 @@ router.get("/search/:searchTerm", (req, res) => {
 /**
  * Get a list of countries within a specific region.
  */
-router.get("/region/:regionName", (req, res) => {
+router.get("/region/:regionName", async  (req, res) => {
 	const regionName = req.params.regionName;
 	const countriesInRegion = countries.filter(
 		(country) => country.region.toLowerCase() === regionName.toLowerCase()
@@ -67,7 +67,7 @@ router.get("/region/:regionName", (req, res) => {
 /**
  * Get a summary of information about a specific country using its alpha3Code.
  */
-router.get("/:alpha3Code/summary", (req, res) => {
+router.get("/:alpha3Code/summary", async  (req, res) => {
 	const alpha3Code = req.params.alpha3Code;
 	const country = countries.find(
 		(country) => country.alpha3Code === alpha3Code
@@ -81,7 +81,7 @@ router.get("/:alpha3Code/summary", (req, res) => {
 		};
 		res.json(countrySummary);
 	} else {
-		res.status(404).json({ message: "Country not found" });
+		res.status(404).json({ message: "Ciudad no encontrada" });
 	}
 });
 

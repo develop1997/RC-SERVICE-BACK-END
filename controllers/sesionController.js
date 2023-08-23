@@ -11,7 +11,8 @@ router.post("/", validateUser, async (req, res) => {
 		const newUser = await queries.createUser(req.body);
 		res.status(201).json(newUser);
 	} catch (error) {
-		res.status(500).json({ error: error.message });
+		let translatedError = await translateString(error.message);
+		res.status(500).json({ error: translatedError });
 	}
 });
 
@@ -21,7 +22,8 @@ router.get("/", async (req, res) => {
 		const users = await queries.getAllUsersWithoutPasswords();
 		res.status(200).json(users);
 	} catch (error) {
-		res.status(500).json({ error: error.message });
+		let translatedError = await translateString(error.message);
+		res.status(500).json({ error: translatedError });
 	}
 });
 
@@ -31,7 +33,8 @@ router.get("/all", async (req, res) => {
 		const users = await queries.getAllUsers();
 		res.status(200).json(users);
 	} catch (error) {
-		res.status(500).json({ error: error.message });
+		let translatedError = await translateString(error.message);
+		res.status(500).json({ error: translatedError });
 	}
 });
 
@@ -45,7 +48,8 @@ router.get("/:correo", async (req, res) => {
 		}
 		res.status(200).json(user);
 	} catch (error) {
-		res.status(500).json({ error: error.message });
+		let translatedError = await translateString(error.message);
+		res.status(500).json({ error: translatedError });
 	}
 });
 
@@ -56,13 +60,14 @@ router.post("/login", validateUser, async (req, res) => {
 		const user = await queries.getUserByCorreo(correo);
 
 		if (!user || user.contraseña !== contraseña) {
-			res.status(401).json({ message: "Invalid credentials" });
+			res.status(401).json({ message: "Credenciales Invalidas" });
 			return;
 		}
 
 		res.status(200).json({ message: "Login successful" });
 	} catch (error) {
-		res.status(500).json({ error: error.message });
+		let translatedError = await translateString(error.message);
+		res.status(500).json({ error: translatedError });
 	}
 });
 
@@ -71,12 +76,13 @@ router.get("/:id", async (req, res) => {
 	try {
 		const user = await queries.getUserById(req.params.id);
 		if (!user) {
-			res.status(404).json({ message: "User not found" });
+			res.status(404).json({ message: "Usuario no encontrado" });
 			return;
 		}
 		res.status(200).json(user);
 	} catch (error) {
-		res.status(500).json({ error: error.message });
+		let translatedError = await translateString(error.message);
+		res.status(500).json({ error: translatedError });
 	}
 });
 
@@ -85,12 +91,13 @@ router.put("/:id", validateUser, async (req, res) => {
 	try {
 		const updatedUser = await queries.updateUser(req.params.id, req.body);
 		if (!updatedUser) {
-			res.status(404).json({ message: "User not found" });
+			res.status(404).json({ message: "Usuario no encontrado" });
 			return;
 		}
 		res.status(200).json(updatedUser);
 	} catch (error) {
-		res.status(500).json({ error: error.message });
+		let translatedError = await translateString(error.message);
+		res.status(500).json({ error: translatedError });
 	}
 });
 
@@ -99,12 +106,13 @@ router.delete("/:id", async (req, res) => {
 	try {
 		const deletedUser = await queries.deleteUser(req.params.id);
 		if (!deletedUser) {
-			res.status(404).json({ message: "User not found" });
+			res.status(404).json({ message: "Usuario no encontrado" });
 			return;
 		}
 		res.status(200).json({ message: "User deleted successfully" });
 	} catch (error) {
-		res.status(500).json({ error: error.message });
+		let translatedError = await translateString(error.message);
+		res.status(500).json({ error: translatedError });
 	}
 });
 
