@@ -1,4 +1,5 @@
 /** @format */
+let axios = require("axios");
 
 async function translateString(inputString) {
 	const sourceLanguage = "en";

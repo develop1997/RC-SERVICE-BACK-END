@@ -1,48 +1,53 @@
 /** @format */
 
 const Joi = require("joi");
+const translateString = require("../utils/Functions");
 
-const validatePermiso = (req, res, next) => {
+const validatePermiso = async (req, res, next) => {
 	const schema = Joi.object({
 		permiso: Joi.string().trim().required(),
 	});
 
 	const { error } = schema.validate(req.body);
 	if (error) {
-		return res.status(400).json({ error: error.details[0].message });
+		let translatedError = await translateString(error.details[0].message);
+		return res.status(400).json({ error: translatedError });
 	}
 
 	next();
 };
 
-const validateRole = (req, res, next) => {
+const validateRole = async (req, res, next) => {
 	const schema = Joi.object({
 		nombreRol: Joi.string().trim().required(),
 	});
 
 	const { error } = schema.validate(req.body);
 	if (error) {
-		return res.status(400).json({ error: error.details[0].message });
+		let translatedError = await translateString(error.details[0].message);
+		return res.status(400).json({ error: translatedError });
 	}
 
 	next();
 };
 
-const validateUser = (req, res, next) => {
+const validateUser = async (req, res, next) => {
 	const schema = Joi.object({
 		correo: Joi.string().email().required(),
-		contraseña: Joi.string().required()
+		contraseña: Joi.string().required(),
 	});
 
 	const { error } = schema.validate(req.body);
 	if (error) {
-		return res.status(400).json({ error: error.details[0].message });
+		let translatedError = await translateString(error.details[0].message);
+		console.log(translatedError)
+		return res.status(400).json({ error: translatedError });
 	}
 
 	next();
 };
 
-const validateAssignPermisoToUser = (req, res, next) => {
+const validateAssignPermisoToUser = async (req, res, next) => {
 	const schema = Joi.object({
 		id_usuario: Joi.string().required(),
 		id_permiso: Joi.string().required(),
@@ -50,13 +55,14 @@ const validateAssignPermisoToUser = (req, res, next) => {
 
 	const { error } = schema.validate(req.params);
 	if (error) {
-		return res.status(400).json({ error: error.details[0].message });
+		let translatedError = await translateString(error.details[0].message);
+		return res.status(400).json({ error: translatedError });
 	}
 
 	next();
 };
 
-const validateAssignRoleToUser = (req, res, next) => {
+const validateAssignRoleToUser = async (req, res, next) => {
 	const schema = Joi.object({
 		userId: Joi.string().required(),
 		roleId: Joi.string().required(),
@@ -64,7 +70,8 @@ const validateAssignRoleToUser = (req, res, next) => {
 
 	const { error } = schema.validate(req.params);
 	if (error) {
-		return res.status(400).json({ error: error.details[0].message });
+		let translatedError = await translateString(error.details[0].message);
+		return res.status(400).json({ error: translatedError });
 	}
 
 	next();
