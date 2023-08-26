@@ -2,10 +2,10 @@
 
 const mongoose = require("mongoose");
 
-const rolesPermisosSchema = new mongoose.Schema({
-	id_rol: {
+const usersPermisosSchema = new mongoose.Schema({
+	id_usuario: {
 		type: mongoose.Schema.Types.ObjectId,
-		ref: "Role",
+		ref: "User",
 		required: true,
 	},
 	id_permiso: {
@@ -15,6 +15,6 @@ const rolesPermisosSchema = new mongoose.Schema({
 	},
 });
 
-const RolesPermisos = mongoose.model("RolesPermiso", rolesPermisosSchema);
+const UsersPermiso = mongoose.model("UsersPermiso", usersPermisosSchema);
 
-module.exports = RolesPermisos;
+module.exports = UsersPermiso;

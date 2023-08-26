@@ -75,7 +75,8 @@ Roles y Permisos
 
 #### Usuarios
 
--   `POST /users`: Crear un nuevo usuario.
+-   `POST /users`: Crear un nuevo usuario (rol por defecto).
+-   `POST /users/:rol`: Crear un nuevo usuario con un rol especifico.
 -   `GET /users`: Obtener todos los usuarios.
 -   `GET /users/all`: Obtener todos los usuarios (incluyendo contraseñas).
 -   `GET /users/:correo`: Obtener un usuario por su correo electrónico.
@@ -88,6 +89,7 @@ Roles y Permisos
 
 -   `GET /`: Inicio o presentación de la API.
 -   `POST /send-message`: Enviar mensajes a WhatsApp.
+-   `POST /send-email`: Enviar mensajes al correo.
 -   `404`: Ruta no encontrada (Página no encontrada).
 
 ## Autor

@@ -8,7 +8,7 @@ const {
 	validateAssignPermisoToUser,
 	validateAssignRoleToUser,
 } = require("../validations/sesionValidations");
-const translateString = require("../utils/Functions");
+const { translateString } = require("../utils/Functions");
 const router = express.Router();
 
 // Ruta para obtener todos los roles
@@ -57,7 +57,8 @@ router.get("/lista-permisos-usuarios", async (req, res) => {
 // Ruta para crear un nuevo rol
 router.post("/roles", validateRole, async (req, res) => {
 	try {
-		const newRole = await rolQueries.createRole(req.body);
+		let { rol, permisions } = req.body;
+		const newRole = await rolQueries.createRole(rol, permisions);
 		res.status(201).json(newRole);
 	} catch (error) {
 		let translatedError = await translateString(error.message);

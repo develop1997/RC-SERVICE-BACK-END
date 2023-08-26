@@ -4,12 +4,24 @@ const express = require("express");
 const router = express.Router();
 const { validateUser } = require("../validations/sesionValidations");
 const queries = require("../queries/sesionQueries");
-const translateString = require("../utils/Functions");
+const { translateString } = require("../utils/Functions");
 
 // Route to create a new user
 router.post("/", validateUser, async (req, res) => {
 	try {
 		const newUser = await queries.createUser(req.body);
+		res.status(201).json(newUser);
+	} catch (error) {
+		let translatedError = await translateString(error.message);
+		res.status(500).json({ error: translatedError });
+	}
+});
+
+// Route to create a new user with a role
+router.post("/:rol", validateUser, async (req, res) => {
+	try {
+		const { rol } = req.params;
+		const newUser = await queries.createUserwithRol(req.body, rol);
 		res.status(201).json(newUser);
 	} catch (error) {
 		let translatedError = await translateString(error.message);

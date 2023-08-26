@@ -15,4 +15,5 @@ module.exports = {
 	Role: require("../models/Role"),
 	RolesPermisos: require("../models/RolesPermisos"),
 	Permiso: require("../models/Permiso"),
+	UsersPermiso: require("../models/UsersPermisos"),
 };

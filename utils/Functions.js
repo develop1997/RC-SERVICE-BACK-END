@@ -21,4 +21,11 @@ async function translateString(inputString) {
 	}
 }
 
-module.exports = translateString;
+function formatPhoneNumber(phoneNumber) {
+	let formattedNumber = phoneNumber.replace(/\D/g, "");
+	formattedNumber += "@c.us";
+	return formattedNumber;
+}
+
+
+module.exports = { translateString, formatPhoneNumber };

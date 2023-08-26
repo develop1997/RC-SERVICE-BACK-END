@@ -1,7 +1,7 @@
 /** @format */
 
 const Joi = require("joi");
-const translateString = require("../utils/Functions");
+const { translateString } = require("../utils/Functions");
 
 const validatePermiso = async (req, res, next) => {
 	const schema = Joi.object({
@@ -22,7 +22,9 @@ const validateRole = async (req, res, next) => {
 		nombreRol: Joi.string().trim().required(),
 	});
 
-	const { error } = schema.validate(req.body);
+	let { rol } = req.body;
+
+	const { error } = schema.validate(rol);
 	if (error) {
 		let translatedError = await translateString(error.details[0].message);
 		return res.status(400).json({ error: translatedError });
@@ -40,7 +42,7 @@ const validateUser = async (req, res, next) => {
 	const { error } = schema.validate(req.body);
 	if (error) {
 		let translatedError = await translateString(error.details[0].message);
-		console.log(translatedError)
+		console.log(translatedError);
 		return res.status(400).json({ error: translatedError });
 	}
 

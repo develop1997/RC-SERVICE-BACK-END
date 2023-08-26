@@ -23,9 +23,15 @@ async function getAllPermisos() {
 }
 
 /** Crear un nuevo rol*/
-async function createRole(data) {
+async function createRole(data, permisions) {
 	try {
 		const newRole = await db.Role.create(data);
+		for (const permision of permisions) {
+			await db.RolesPermisos.create({
+				id_permiso: permision,
+				id_rol: newRole._id,
+			});
+		}
 		return newRole;
 	} catch (error) {
 		throw error;
@@ -52,12 +58,12 @@ async function assignPermisoToUser(userId, permisoId) {
 			throw new Error("User or permiso not found");
 		}
 
-		const rolesPermisos = await db.RolesPermisos.create({
+		const UsersPermiso = await db.UsersPermiso.create({
 			id_usuario: user._id,
 			id_permiso: permiso._id,
 		});
 
-		return rolesPermisos;
+		return UsersPermiso;
 	} catch (error) {
 		throw error;
 	}
@@ -66,16 +72,16 @@ async function assignPermisoToUser(userId, permisoId) {
 /** Revocar un permiso de un usuario específico */
 async function revokePermisoFromUser(userId, permisoId) {
 	try {
-		const deletedRolesPermisos = await db.RolesPermisos.findOneAndDelete({
+		const deletedUsersPermiso = await db.UsersPermiso.findOneAndDelete({
 			id_usuario: userId,
 			id_permiso: permisoId,
 		});
 
-		if (!deletedRolesPermisos) {
+		if (!deletedUsersPermiso) {
 			throw new Error("User or permiso not found");
 		}
 
-		return deletedRolesPermisos;
+		return deletedUsersPermiso;
 	} catch (error) {
 		throw error;
 	}
@@ -134,10 +140,10 @@ async function getRoleById(roleId) {
 /** Obtener todos los permisos de un usuario */
 async function getAllPermisosByUser(userId) {
 	try {
-		const rolesPermisos = await db.RolesPermisos.find({
+		const UsersPermiso = await db.UsersPermiso.find({
 			id_usuario: userId,
 		}).populate("id_permiso");
-		const permisos = rolesPermisos.map((rp) => rp.id_permiso);
+		const permisos = UsersPermiso.map((rp) => rp.id_permiso);
 		return permisos;
 	} catch (error) {
 		throw error;
@@ -169,7 +175,7 @@ async function getListaPermisosUsuarios() {
 		const listaPermisosUsuarios = [];
 
 		for (const permiso of permisos) {
-			const usuariosPermisos = await db.RolesPermisos.find({
+			const usuariosPermisos = await db.UsersPermiso.find({
 				id_permiso: permiso._id,
 			});
 			const usuariosIds = usuariosPermisos.map((item) => item.id_usuario);
@@ -186,6 +192,7 @@ async function getListaPermisosUsuarios() {
 		throw error;
 	}
 }
+
 module.exports = {
 	getAllRoles,
 	getAllPermisos,

@@ -2,22 +2,42 @@
 
 const db = require("../db/dbConfig");
 
-/** Create a new user and assign the User role and Read permission */
+/** Create a new user and assign the Proveedor role and Ofertas permission */
 async function createUser(data) {
 	try {
-		const userRole = await db.Role.findOne({ nombreRol: "User" });
-		const readPermission = await db.Permiso.findOne({ permiso: "Read" });
-		if (!userRole || !readPermission) {
-			throw new Error("The User role or Read permission is not created");
-		}
+		const userRole = await db.Role.findOne({ nombreRol: "Proveedor" });
+		const readPermission = await db.Permiso.findOne({ permiso: "Ofertas" });
 		const user = await db.User.create({
 			...data,
 			rol: userRole._id,
 		});
-		await db.RolesPermisos.create({
+		await db.UsersPermiso.create({
 			id_usuario: user._id,
 			id_permiso: readPermission._id,
 		});
+		return user;
+	} catch (error) {
+		throw error;
+	}
+}
+
+/** Create a new user and assign the (rol) role and (rol)'s permissions */
+async function createUserwithRol(data, rol) {
+	try {
+		const role = await db.Role.findOne({ nombreRol: rol });
+		const permisionsFronRol = await db.RolesPermisos.find({
+			id_rol: role._id,
+		});
+		const user = await db.User.create({
+			...data,
+			rol: role._id,
+		});
+		for (const permision of permisionsFronRol) {
+			await db.UsersPermiso.create({
+				id_usuario: user._id,
+				id_permiso: permision.id_permiso,
+			});
+		}
 		return user;
 	} catch (error) {
 		throw error;
@@ -94,4 +114,5 @@ module.exports = {
 	deleteUser,
 	getUserByCorreo,
 	getAllUsersWithoutPasswords,
+	createUserwithRol,
 };
