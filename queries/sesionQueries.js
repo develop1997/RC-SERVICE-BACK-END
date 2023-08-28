@@ -110,7 +110,10 @@ async function updateUser(userId, data, rol) {
 /**  Eliminar un usuario por su ID*/
 async function deleteUser(userId) {
 	try {
-		const deletedUser = await db.User.findByIdAndDelete(userId);
+		const deletedUser = await db.User.findByIdAndDelete({ _id: userId });
+
+		console.log("Eliminando usuario: " + userId + " y todos sus permisos");
+		await db.UsersPermiso.deleteMany({ id_usuario: userId });
 		return deletedUser;
 	} catch (error) {
 		throw error;

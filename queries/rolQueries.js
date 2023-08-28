@@ -236,10 +236,24 @@ async function getListaPermisosUsuarios() {
 	}
 }
 
+async function getUsuariosFromPermiso(id) {
+	try {
+		const usuariosPermisos = await db.UsersPermiso.find({
+			id_permiso: id,
+		}).populate("id_usuario");
+
+		return usuariosPermisos;
+	} catch (error) {
+		throw error;
+	}
+}
+
 /**  Eliminar un rol por su ID*/
 async function deleteRol(Id) {
 	try {
-		const deleted = await db.Role.findByIdAndDelete(Id);
+		const deleted = await db.Role.findOneAndDelete({ _id: Id });
+		console.log("Eliminando rol: " + Id + " y todos sus permisos");
+		await db.RolesPermisos.deleteMany({ id_rol: Id });
 		return deleted;
 	} catch (error) {
 		throw error;
@@ -249,7 +263,12 @@ async function deleteRol(Id) {
 /**  Eliminar un permiso por su ID*/
 async function deletePermision(Id) {
 	try {
-		const deleted = await db.Permiso.findByIdAndDelete(Id);
+		const deleted = await db.Permiso.findOneAndDelete({ _id: Id });
+
+		console.log("Eliminando permiso: " + Id + " y todas sus relaciones");
+
+		await db.UsersPermisos.deleteMany({ id_permiso: Id });
+		await db.RolesPermisos.deleteMany({ id_permiso: Id });
 		return deleted;
 	} catch (error) {
 		throw error;
@@ -274,4 +293,5 @@ module.exports = {
 	updateRoleById,
 	getpermisionById,
 	updatepermisionById,
+	getUsuariosFromPermiso,
 };

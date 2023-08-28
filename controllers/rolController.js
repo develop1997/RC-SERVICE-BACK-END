@@ -43,6 +43,16 @@ router.get("/lista-roles-usuarios", async (req, res) => {
 	}
 });
 
+router.get("/permision/:id/users", async (req, res) => {
+	try {
+		const listaUsuarios = await rolQueries.getUsuariosFromPermiso(req.params.id);
+		res.status(200).json(listaUsuarios);
+	} catch (error) {
+		let translatedError = await translateString(error.message);
+		res.status(500).json({ error: translatedError });
+	}
+});
+
 router.get("/lista-permisos-usuarios", async (req, res) => {
 	try {
 		const listaPermisosUsuarios =

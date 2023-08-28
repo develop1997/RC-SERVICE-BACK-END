@@ -65,8 +65,7 @@ Roles y Permisos
 -   `GET /admin-rol/permisos`: Obtener todos los permisos.
 -   `GET /admin-rol/permision/:id`: Obtener un permiso mediante su id.
 -   `PUT /admin-rol/permision/:id`: Edita un permiso mediante su id.
--   `GET /admin-rol/usuarios-por-rol/:rolId`: Obtener usuarios por rol.
--   `GET /admin-rol/usuarios-por-permiso/:permisoId`: Obtener usuarios por permiso.
+-   `GET /admin-rol//permision/:id/users`: Obtener usuarios por permiso.
 -   `GET /admin-rol/lista-roles-usuarios`: Obtener una lista de roles y los usuarios asociados.
 -   `GET /admin-rol/lista-permisos-usuarios`: Obtener una lista de permisos y los usuarios que los tienen.
 -   `POST /admin-rol/roles`: Crear un nuevo rol.
