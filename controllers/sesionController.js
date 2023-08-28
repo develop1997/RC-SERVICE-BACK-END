@@ -17,18 +17,6 @@ router.post("/", validateUser, async (req, res) => {
 	}
 });
 
-// Route to create a new user with a role
-router.post("/:rol", validateUser, async (req, res) => {
-	try {
-		const { rol } = req.params;
-		const newUser = await queries.createUserwithRol(req.body, rol);
-		res.status(201).json(newUser);
-	} catch (error) {
-		let translatedError = await translateString(error.message);
-		res.status(500).json({ error: translatedError });
-	}
-});
-
 // Route to get all users Without Passwords
 router.get("/", async (req, res) => {
 	try {
@@ -52,7 +40,7 @@ router.get("/all", async (req, res) => {
 });
 
 // Route to get a user by their correo (email)
-router.get("/:correo", async (req, res) => {
+router.get("/email/:correo", async (req, res) => {
 	try {
 		const user = await queries.getUserByCorreo(req.params.correo);
 		if (!user) {
@@ -84,8 +72,20 @@ router.post("/login", validateUser, async (req, res) => {
 	}
 });
 
+// Route to create a new user with a role
+router.post("/:rol", validateUser, async (req, res) => {
+	try {
+		const { rol } = req.params;
+		const newUser = await queries.createUserwithRol(req.body, rol);
+		res.status(201).json(newUser);
+	} catch (error) {
+		let translatedError = await translateString(error.message);
+		res.status(500).json({ error: translatedError });
+	}
+});
+
 // Route to get a user by their ID
-router.get("/:id", async (req, res) => {
+router.get("/id/:id", async (req, res) => {
 	try {
 		const user = await queries.getUserById(req.params.id);
 		if (!user) {
@@ -102,7 +102,8 @@ router.get("/:id", async (req, res) => {
 // Route to update a user by their ID
 router.put("/:id", validateUser, async (req, res) => {
 	try {
-		const updatedUser = await queries.updateUser(req.params.id, req.body);
+		let { data, rol } = req.body;
+		const updatedUser = await queries.updateUser(req.params.id, data, rol);
 		if (!updatedUser) {
 			res.status(404).json({ message: "Usuario no encontrado" });
 			return;

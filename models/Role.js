@@ -10,6 +10,12 @@ const roleSchema = new mongoose.Schema({
 	},
 });
 
+roleSchema.pre("remove", async function (next) {
+	const RolesPermisos = mongoose.model("RolesPermiso");
+	await RolesPermisos.deleteMany({ id_rol: this._id });
+	next();
+});
+
 const Role = mongoose.model("Role", roleSchema);
 
 module.exports = Role;

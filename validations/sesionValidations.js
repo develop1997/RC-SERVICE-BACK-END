@@ -39,7 +39,10 @@ const validateUser = async (req, res, next) => {
 		contraseña: Joi.string().required(),
 	});
 
-	const { error } = schema.validate(req.body);
+	const { error } = req.body.data
+		? schema.validate(req.body.data)
+		: schema.validate(req.body);
+
 	if (error) {
 		let translatedError = await translateString(error.details[0].message);
 		console.log(translatedError);

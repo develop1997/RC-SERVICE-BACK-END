@@ -19,6 +19,8 @@ Para configurar el proyecto, necesitas crear un archivo llamado `.env` en la ra�
 ```dotenv
 PORT= El puerto donde se ejecutará tu aplicación (por ejemplo, 3000)
 MG_DATABASE_LINK= La cadena de conexión a tu base de datos MongoDB (por ejemplo, mongodb://localhost/testname)
+GOOGLE_ACC_USER=el correo desde el cual la app enviara correos.
+GOOGLE_ACC_PASWORD=la contraseña de app de la cuenta.
 ```
 
 ## Uso
@@ -58,7 +60,11 @@ GET /countries/:alpha3Code/summary: Obtener un resumen de información sobre un 
 Roles y Permisos
 
 -   `GET /admin-rol/roles`: Obtener todos los roles.
+-   `GET /admin-rol/role/:id`: Obtener un rol mediante su id.
+-   `PUT /admin-rol/role/:id`: Edita un rol mediante su id.
 -   `GET /admin-rol/permisos`: Obtener todos los permisos.
+-   `GET /admin-rol/permision/:id`: Obtener un permiso mediante su id.
+-   `PUT /admin-rol/permision/:id`: Edita un permiso mediante su id.
 -   `GET /admin-rol/usuarios-por-rol/:rolId`: Obtener usuarios por rol.
 -   `GET /admin-rol/usuarios-por-permiso/:permisoId`: Obtener usuarios por permiso.
 -   `GET /admin-rol/lista-roles-usuarios`: Obtener una lista de roles y los usuarios asociados.
@@ -70,6 +76,8 @@ Roles y Permisos
 -   `POST /admin-rol/usuarios/:id_usuario/roles/:roleId`: Asignar un rol a un usuario.
 -   `DELETE /admin-rol/usuarios/:userId/roles`: Revocar un rol de un usuario.
 -   `GET /admin-rol/usuarios/:userId/permisos`: Obtener todos los permisos de un usuario.
+-   `DELETE /admin-rol/role/:id`: Eliminar un rol por su ID.
+-   `DELETE /admin-rol/permiso/:id`: Eliminar un permiso por su ID.
 
 ### Controlador: sesionController
 
@@ -79,9 +87,9 @@ Roles y Permisos
 -   `POST /users/:rol`: Crear un nuevo usuario con un rol especifico.
 -   `GET /users`: Obtener todos los usuarios.
 -   `GET /users/all`: Obtener todos los usuarios (incluyendo contraseñas).
--   `GET /users/:correo`: Obtener un usuario por su correo electrónico.
+-   `GET /users/email/:correo`: Obtener un usuario por su correo electrónico.
 -   `POST /users/login`: Iniciar sesión de usuario.
--   `GET /users/:id`: Obtener un usuario por su ID.
+-   `GET /users/id/:id`: Obtener un usuario por su ID.
 -   `PUT /users/:id`: Actualizar un usuario por su ID.
 -   `DELETE /users/:id`: Eliminar un usuario por su ID.
 

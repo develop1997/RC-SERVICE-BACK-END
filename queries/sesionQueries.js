@@ -77,7 +77,7 @@ const getUserByCorreo = async (correo) => {
 /**  Obtener un usuario por su ID*/
 async function getUserById(userId) {
 	try {
-		const user = await db.User.findById(userId);
+		const user = await db.User.findById(userId).populate("rol");
 		return user;
 	} catch (error) {
 		throw error;
@@ -85,11 +85,22 @@ async function getUserById(userId) {
 }
 
 /** Actualizar un usuario por su ID*/
-async function updateUser(userId, data) {
+async function updateUser(userId, data, rol) {
 	try {
 		const updatedUser = await db.User.findByIdAndUpdate(userId, data, {
 			new: true,
 		});
+		await db.UsersPermiso.deleteMany({ id_usuario: userId });
+		const role = await db.Role.findOne({ nombreRol: rol });
+		const permisionsFronRol = await db.RolesPermisos.find({
+			id_rol: role._id,
+		});
+		for (const permision of permisionsFronRol) {
+			await db.UsersPermiso.create({
+				id_usuario: userId,
+				id_permiso: permision.id_permiso,
+			});
+		}
 		return updatedUser;
 	} catch (error) {
 		throw error;

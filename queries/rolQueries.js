@@ -137,6 +137,49 @@ async function getRoleById(roleId) {
 	}
 }
 
+/** editar el rol por su ID */
+async function updateRoleById(roleId, data) {
+	try {
+		let role = await db.Role.findByIdAndUpdate(roleId, data, {
+			new: true,
+		});
+		if (!role) {
+			throw new Error("Role not found");
+		}
+		return role;
+	} catch (error) {
+		throw error;
+	}
+}
+
+/** Obtener el permiso por su ID */
+async function getpermisionById(Id) {
+	try {
+		const role = await db.Permiso.findById(Id);
+		if (!role) {
+			throw new Error("Permiso not found");
+		}
+		return role;
+	} catch (error) {
+		throw error;
+	}
+}
+
+/** editar el permiso por su ID */
+async function updatepermisionById(Id, data) {
+	try {
+		let role = await db.Permiso.findByIdAndUpdate(Id, data, {
+			new: true,
+		});
+		if (!role) {
+			throw new Error("Permiso not found");
+		}
+		return role;
+	} catch (error) {
+		throw error;
+	}
+}
+
 /** Obtener todos los permisos de un usuario */
 async function getAllPermisosByUser(userId) {
 	try {
@@ -193,6 +236,26 @@ async function getListaPermisosUsuarios() {
 	}
 }
 
+/**  Eliminar un rol por su ID*/
+async function deleteRol(Id) {
+	try {
+		const deleted = await db.Role.findByIdAndDelete(Id);
+		return deleted;
+	} catch (error) {
+		throw error;
+	}
+}
+
+/**  Eliminar un permiso por su ID*/
+async function deletePermision(Id) {
+	try {
+		const deleted = await db.Permiso.findByIdAndDelete(Id);
+		return deleted;
+	} catch (error) {
+		throw error;
+	}
+}
+
 module.exports = {
 	getAllRoles,
 	getAllPermisos,
@@ -206,4 +269,9 @@ module.exports = {
 	getRoleById,
 	getListaRolesUsuarios,
 	getListaPermisosUsuarios,
+	deleteRol,
+	deletePermision,
+	updateRoleById,
+	getpermisionById,
+	updatepermisionById,
 };

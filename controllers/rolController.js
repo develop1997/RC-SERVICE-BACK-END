@@ -151,4 +151,86 @@ router.get("/usuarios/:userId/permisos", async (req, res) => {
 	}
 });
 
+// Ruta para obtener rol por su id
+router.get("/role/:id", async (req, res) => {
+	try {
+		const role = await rolQueries.getRoleById(req.params.id);
+		res.status(200).json(role);
+	} catch (error) {
+		let translatedError = await translateString(error.message);
+		res.status(500).json({ error: translatedError });
+	}
+});
+
+// Ruta para editar un rol
+router.put("/role/:id", validateRole, async (req, res) => {
+	try {
+		const role = await rolQueries.updateRoleById(
+			req.params.id,
+			req.body.rol
+		);
+		res.status(200).json(role);
+	} catch (error) {
+		let translatedError = await translateString(error.message);
+		res.status(500).json({ error: translatedError });
+	}
+});
+
+// Ruta para obtener permiso por su id
+router.get("/permision/:id", async (req, res) => {
+	try {
+		const role = await rolQueries.getpermisionById(req.params.id);
+		res.status(200).json(role);
+	} catch (error) {
+		let translatedError = await translateString(error.message);
+		res.status(500).json({ error: translatedError });
+	}
+});
+
+// Ruta para editar un permiso
+router.put("/permision/:id", validatePermiso, async (req, res) => {
+	try {
+		const role = await rolQueries.updatepermisionById(
+			req.params.id,
+			req.body
+		);
+		res.status(200).json(role);
+	} catch (error) {
+		let translatedError = await translateString(error.message);
+		res.status(500).json({ error: translatedError });
+	}
+});
+
+// Route to delete a role by their ID
+router.delete("/role/:id", async (req, res) => {
+	try {
+		const deletedrole = await rolQueries.deleteRol(req.params.id);
+		if (!deletedrole) {
+			res.status(404).json({ message: "rol no encontrado" });
+			return;
+		}
+		res.status(200).json({ message: "role deleted successfully" });
+	} catch (error) {
+		let translatedError = await translateString(error.message);
+		res.status(500).json({ error: translatedError });
+	}
+});
+
+// Route to delete a permision by their ID
+router.delete("/permiso/:id", async (req, res) => {
+	try {
+		const deletedpermision = await rolQueries.deletePermision(
+			req.params.id
+		);
+		if (!deletedpermision) {
+			res.status(404).json({ message: "permiso no encontrado" });
+			return;
+		}
+		res.status(200).json({ message: "permision deleted successfully" });
+	} catch (error) {
+		let translatedError = await translateString(error.message);
+		res.status(500).json({ error: translatedError });
+	}
+});
+
 module.exports = router;
