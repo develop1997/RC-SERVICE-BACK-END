@@ -107,6 +107,18 @@ async function updateUser(userId, data, rol) {
 	}
 }
 
+/** Actualizar la contraseña de usuario por su correo*/
+async function updatePasswordByEmail(correo, data) {
+	try {
+		const user = await db.User.findOne({ correo });
+		user.contraseña = data;
+		await user.save();
+		return user;
+	} catch (error) {
+		throw error;
+	}
+}
+
 /**  Eliminar un usuario por su ID*/
 async function deleteUser(userId) {
 	try {
@@ -129,4 +141,6 @@ module.exports = {
 	getUserByCorreo,
 	getAllUsersWithoutPasswords,
 	createUserwithRol,
+	updatePasswordByEmail,
 };
+

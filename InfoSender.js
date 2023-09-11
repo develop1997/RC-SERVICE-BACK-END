@@ -32,10 +32,10 @@ async function enviarMensajeWhatsapp(numero, mensaje) {
 		const numeroEstandarizado = formatPhoneNumber(numero);
 		await client.sendMessage(numeroEstandarizado, mensaje).then((res) => {
 			console.log("Mensaje enviado:", mensaje);
-			setTimeout(() => {
-				client.destroy();
-			}, 5000);
 		});
+		setTimeout(() => {
+			client.destroy();
+		}, 20000);
 	} catch (error) {
 		console.error("Error al enviar el mensaje:", error);
 		return false;

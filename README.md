@@ -78,6 +78,7 @@ Roles y Permisos
 -   `DELETE /admin-rol/role/:id`: Eliminar un rol por su ID.
 -   `DELETE /admin-rol/permiso/:id`: Eliminar un permiso por su ID.
 
+
 ### Controlador: sesionController
 
 #### Usuarios
@@ -90,6 +91,7 @@ Roles y Permisos
 -   `POST /users/login`: Iniciar sesión de usuario.
 -   `GET /users/id/:id`: Obtener un usuario por su ID.
 -   `PUT /users/:id`: Actualizar un usuario por su ID.
+-   `PUT /users/password/:correo`: Actualizar la contraseña de usuario por su correo.
 -   `DELETE /users/:id`: Eliminar un usuario por su ID.
 
 ### Otras Rutas

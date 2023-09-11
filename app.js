@@ -1,6 +1,7 @@
 /** @format */
 
 const express = require("express");
+const db = require("./db/dbConfig");
 const cors = require("cors");
 const app = express();
 const sesionController = require("./controllers/sesionController");
@@ -60,16 +61,25 @@ app.post("/send-email", async (req, res) => {
 		});
 	}
 
-	let sent = await enviarCorreo(email, message, titulo);
+	let user = await db.User.findOne({ correo: email });
 
-	if (sent) {
-		res.status(200).json({ success: true });
+	if (user) {
+		let sent = await enviarCorreo(email, message, titulo);
+
+		if (sent) {
+			res.status(200).json({ success: true });
+		} else {
+			res.status(500).json({
+				error: "Ocurrió un error mientras se enviaba el correo",
+			});
+		}
 	} else {
 		res.status(500).json({
-			error: "Ocurrió un error mientras se enviaba el correo",
+			error: "El correo no esta registrado",
 		});
 	}
 });
+
 // 404 Route
 app.use((req, res, next) => {
 	res.status(404).send("404 Ruta no encontrada");

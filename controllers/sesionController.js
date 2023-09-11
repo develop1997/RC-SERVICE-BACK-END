@@ -115,6 +115,26 @@ router.put("/:id", validateUser, async (req, res) => {
 	}
 });
 
+// Route to update a user's password by their email
+router.put("/password/:correo", async (req, res) => {
+	try {
+		const { nuevaContraseña } = req.body;
+		const correo = req.params.correo;
+		const updatedUser = await queries.updatePasswordByEmail(
+			correo,
+			nuevaContraseña
+		);
+		if (!updatedUser) {
+			res.status(404).json({ message: "Usuario no encontrado" });
+			return;
+		}
+		res.status(200).json(updatedUser);
+	} catch (error) {
+		let translatedError = await translateString(error.message);
+		res.status(500).json({ error: translatedError });
+	}
+});
+
 // Route to delete a user by their ID
 router.delete("/:id", async (req, res) => {
 	try {
@@ -129,5 +149,6 @@ router.delete("/:id", async (req, res) => {
 		res.status(500).json({ error: translatedError });
 	}
 });
+
 
 module.exports = router;
