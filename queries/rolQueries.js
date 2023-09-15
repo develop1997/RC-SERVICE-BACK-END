@@ -131,20 +131,31 @@ async function getRoleById(roleId) {
 		if (!role) {
 			throw new Error("Role not found");
 		}
-		return role;
+		const permisos = await db.RolesPermisos.find({ id_rol: roleId });
+		return {
+			rol: role,
+			permisos: permisos,
+		};
 	} catch (error) {
 		throw error;
 	}
 }
 
 /** editar el rol por su ID */
-async function updateRoleById(roleId, data) {
+async function updateRoleById(roleId, rol, permisions) {
 	try {
-		let role = await db.Role.findByIdAndUpdate(roleId, data, {
+		let role = await db.Role.findByIdAndUpdate(roleId, rol, {
 			new: true,
 		});
 		if (!role) {
 			throw new Error("Role not found");
+		}
+		await db.RolesPermisos.deleteMany({ id_rol: roleId });
+		for (const permision of permisions) {
+			await db.RolesPermisos.create({
+				id_permiso: permision,
+				id_rol: roleId,
+			});
 		}
 		return role;
 	} catch (error) {
@@ -267,7 +278,7 @@ async function deletePermision(Id) {
 
 		console.log("Eliminando permiso: " + Id + " y todas sus relaciones");
 
-		await db.UsersPermisos.deleteMany({ id_permiso: Id });
+		await db.UsersPermiso.deleteMany({ id_permiso: Id });
 		await db.RolesPermisos.deleteMany({ id_permiso: Id });
 		return deleted;
 	} catch (error) {

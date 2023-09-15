@@ -177,7 +177,8 @@ router.put("/role/:id", validateRole, async (req, res) => {
 	try {
 		const role = await rolQueries.updateRoleById(
 			req.params.id,
-			req.body.rol
+			req.body.rol,
+			req.body.permisions
 		);
 		res.status(200).json(role);
 	} catch (error) {
