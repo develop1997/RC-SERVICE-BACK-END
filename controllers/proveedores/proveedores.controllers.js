@@ -2,106 +2,100 @@ const { ObjectId } = require("mongodb");
 const db = require("../../db/dbConfig");
 
 class ProveedoresController {
-	getProveedores(req, res, next) {
-		db.Proveedores.find({})
-			.then((result) => {
-				res.status(200).json(result);
-			})
-			.catch((error) => {
-				res.status(500).json({ error: "Error al obtener Proveedores" });
-			})
-			.finally(() => next());
+	async getProveedores(req, res, next) {
+		try {
+			const proveedores = await db.Proveedores.find({});
+			res.status(200).json(proveedores);
+		} catch (error) {
+			console.error(error);
+			res.status(500).json({ error: "Error al obtener proveedores" });
+		}
 	}
 
 	async getProveedorPorId(req, res, next) {
 		const id = req.params.id;
+
 		try {
-			const result = await db.Proveedores.find({
-				_id: new ObjectId(id),
-			});
-			res.status(200).send(result);
+			const proveedor = await db.Proveedores.findById(id);
+
+			if (!proveedor) {
+				return res
+					.status(404)
+					.json({ error: "Proveedor no encontrado" });
+			}
+
+			res.status(200).json(proveedor);
 		} catch (error) {
-			console.log("Error: " + error);
-		} finally {
-			next();
+			console.error("Error: " + error);
+			res.status(500).json({ error: "Error al obtener el proveedor" });
 		}
 	}
 
-	//_____________________________________________________________________________________
-
-	async postProveedor(req, res) {
+	async postProveedor(req, res, next) {
 		const { Nombre, Apellido, Telefono, Email, Direccion } = req.body;
+
 		try {
 			const proveedor = new db.Proveedores({
-				Nombre: Nombre,
-				Apellido: Apellido,
-				Telefono: Telefono,
-				Email: Email,
-				Direccion: Direccion,
+				Nombre,
+				Apellido,
+				Telefono,
+				Email,
+				Direccion,
 			});
 
 			await proveedor.save();
 
-			res.status(200).json({ message: "Proveedor creado exitosamente" });
+			res.status(201).json({ message: "Proveedor creado exitosamente" });
 		} catch (error) {
-			console.log(error);
+			console.error(error);
 			res.status(500).json({ error: "Error al crear el proveedor" });
 		}
 	}
 
-	//_____________________________________________________________________________________
-
 	async putProveedor(req, res, next) {
-		const { Nombre, Apellido, Telefono, Email, Direccion } = req.body;
 		const id = req.params.id;
-		const collection = "proveedor";
+
 		try {
-			const result = await db.Proveedores.updateOne(
-				{ _id: new ObjectId(id) },
+			const updatedProveedor = await db.Proveedores.findByIdAndUpdate(
+				id,
+				req.body,
 				{
-					$set: {
-						Nombre: Nombre,
-						Apellido: Apellido,
-						Telefono: Telefono,
-						Email: Email,
-						Direccion: Direccion,
-					},
+					new: true,
 				}
 			);
-			if (result.modifiedCount === 1) {
-				res.status(200).json({
-					message: "Documento actualizado exitosamente",
-				});
-			} else {
-				res.status(500).json({
-					error: "Error al actualizar el documento",
-				});
+
+			if (!updatedProveedor) {
+				return res
+					.status(404)
+					.json({ error: "Proveedor no encontrado" });
 			}
+
+			res.status(200).json({
+				message: "Proveedor actualizado exitosamente",
+				Resultado: updatedProveedor,
+			});
 		} catch (error) {
-			console.log(error);
-		} finally {
-			next();
+			console.error(error);
+			res.status(500).json({ error: "Error al actualizar el proveedor" });
 		}
 	}
 
-	//_____________________________________________________________________________________
-
 	async deleteProveedor(req, res, next) {
 		const id = req.params.id;
-		try {
-			const result = await db.Proveedores.deleteOne({
-				_id: new ObjectId(id),
-			});
 
-			if (result) {
-				res.status(200).send({ message: "Borrado con éxito" });
-			} else {
-				res.status(500).send({ error: "Error al eliminar el archivo" });
+		try {
+			const result = await db.Proveedores.findByIdAndDelete(id);
+
+			if (!result) {
+				return res
+					.status(404)
+					.json({ error: "Proveedor no encontrado" });
 			}
+
+			res.status(200).json({ message: "Proveedor eliminado con éxito" });
 		} catch (error) {
-			console.log(error);
-		} finally {
-			next();
+			console.error("Error al eliminar el proveedor -> " + error.message);
+			res.status(500).json({ error: "Error al eliminar el proveedor" });
 		}
 	}
 }

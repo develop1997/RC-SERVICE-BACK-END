@@ -1,65 +1,72 @@
 const { ObjectId } = require("mongodb");
 const db = require("../../db/dbConfig");
 
-class CandidateStatus_Controller {
-	getStatus(req, res, next) {
-		db.CandidateStatus.find()
-			.then((result) => {
-				res.status(200).json(result);
-			})
-			.catch((error) => {
-				res.status(500).json({
-					error: "Error al obtener estados de candidato",
-					err: error.message,
-				});
-			})
-			.finally(() => next());
-	}
-
-	postStatus(req, res, next) {
-		const { name, description } = req.body;
-
-		const result = new db.CandidateStatus({
-			name,
-			description,
-		});
-		result
-			.save()
-			.then((result) => res.status(201).json(result))
-			.catch((error) =>
-				res.status(500).json({
-					Error: "ERROR ESTADO DE CANDIDATO ***",
-					err: error.message,
-				})
-			)
-			.finally(() => next());
-	}
-	async getIdStatus(req, res, next) {
-		const id = req.params.id;
+class CandidateStatusController {
+	async getStatus(req, res, next) {
 		try {
-			const result = await db.CandidateStatus.find({
-				_id: new ObjectId(id),
-			});
-			res.status(200).send(result);
+			const result = await db.CandidateStatus.find();
+			res.status(200).json(result);
 		} catch (error) {
-			console.log("*** El Error es: ***" + error.message);
+			console.error("Error al obtener estados de candidato:", error);
+			res.status(500).json({
+				error: "Error al obtener estados de candidato",
+				err: error.message,
+			});
 		} finally {
 			next();
 		}
 	}
-	async putStatus(req, res, next) {
-		const Update = req.body;
+
+	async postStatus(req, res, next) {
+		const { name, description } = req.body;
+
+		try {
+			const result = await db.CandidateStatus.create({
+				name,
+				description,
+			});
+			res.status(201).json(result);
+		} catch (error) {
+			console.error("Error al crear estado de candidato:", error);
+			res.status(500).json({
+				Error: "Error al crear estado de candidato",
+				err: error.message,
+			});
+		} finally {
+			next();
+		}
+	}
+
+	async getIdStatus(req, res, next) {
 		const id = req.params.id;
 		try {
-			const result = await db.CandidateStatus.findOneAndUpdate(
-				{ _id: new ObjectId(id) },
-				Update,
-				{ new: true } // Para obtener el documento actualizado en lugar del antiguo
-			);
+			const result = await db.CandidateStatus.findById(id);
+			if (result) {
+				res.status(200).json(result);
+			} else {
+				res.status(404).send(
+					"No se encontró ningún documento con el ID proporcionado."
+				);
+			}
+		} catch (error) {
+			console.error("Error al buscar estado de candidato por ID:", error);
+		} finally {
+			next();
+		}
+	}
 
+	async putStatus(req, res, next) {
+		const id = req.params.id;
+		const update = req.body;
+		try {
+			const result = await db.CandidateStatus.findByIdAndUpdate(
+				id,
+				update,
+				{ new: true }
+			);
 			if (result) {
 				res.status(200).json({
-					message: "Documento actualizado exitosamente\n",
+					message: "Documento actualizado exitosamente",
 					result,
 				});
 			} else {
@@ -68,42 +75,45 @@ class CandidateStatus_Controller {
 				});
 			}
 		} catch (error) {
-			console.log("Error -> " + error.message);
+			console.error(
+				"Error al actualizar estado de candidato:",
+				error.message
+			);
 		} finally {
 			next();
 		}
 	}
+
 	async deleteStatus(req, res, next) {
 		const id = req.params.id;
-
 		try {
 			const reference = await db.Candidate.find({
-				id_CandidateStatus: new ObjectId(id),
+				id_CandidateStatus: id,
 			});
-			console.log(reference);
 			if (reference.length > 0) {
 				res.status(500).send({
 					error:
-						"No se puede eliminar este documento, ya que se utiliza en otra parte. ",
+						"No se puede eliminar este documento, ya que se utiliza en otra parte.",
 				});
 			} else {
-				const result = await db.CandidateStatus.findOneAndDelete({
-					_id: new ObjectId(id),
-				});
-
+				const result = await db.CandidateStatus.findByIdAndDelete(id);
 				res.status(200).send({
 					message: "Borrado con éxito",
 					Result: result,
 				});
 			}
 		} catch (error) {
-			console.log("Error al eliminar el documento -> " + error.message);
+			console.error(
+				"Error al eliminar estado de candidato:",
+				error.message
+			);
 			res.status(500).send({
-				error: "error.",
+				error: "Error al eliminar estado de candidato",
 			});
 		} finally {
 			next();
 		}
 	}
 }
-module.exports = CandidateStatus_Controller;
+
+module.exports = CandidateStatusController;

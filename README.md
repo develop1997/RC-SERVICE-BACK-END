@@ -10,13 +10,9 @@ Este es un proyecto que usa Node.js, Express, MongoDB y otras dependencias para 
 
 # Notas Cristian
 
-
-
 ## Errores
 
 -
-
-
 
 ## Instalación
 
@@ -47,6 +43,14 @@ npm start
 
 Esto iniciará el servidor en el puerto especificado y se conectará a la base de datos MongoDB.
 
+Para iniciar la aplicación en modo de prueba (usando nodemon), ejecuta el siguiente comando:
+
+```shell
+npm start-dev
+```
+
+Esto iniciará el servidor en el puerto especificado y se conectará a la base de datos, se volverá a ejecutar el servidor si algun archivo cambia
+
 Para poblar la base de datos con algunos datos de prueba, ejecuta el siguiente comando:
 
 ```shell
@@ -62,12 +66,13 @@ A continuación se presenta una lista de controladores y las rutas correspondien
 ### Controlador: countriesController
 
 Países
-GET /countries/country-names-codes: Obtener nombres de países y sus códigos de llamada.
-GET /countries: Obtener la lista de todos los países.
-GET /countries/:alpha3Code: Obtener información sobre un país específico mediante su código alfa3.
-GET /countries/search/:searchTerm: Buscar países por nombre.
-GET /countries/region/:regionName: Obtener una lista de países dentro de una región específica.
-GET /countries/:alpha3Code/summary: Obtener un resumen de información sobre un país mediante su código alfa3.
+
+-   `GET /countries/country-names-codes`: Obtener nombres de países y sus códigos de llamada.
+-   `GET /countries`: Obtener la lista de todos los países.
+-   `GET /countries/:alpha3Code`: Obtener información sobre un país específico mediante su código alfa3.
+-   `GET /countries/search/:searchTerm`: Buscar países por nombre.
+-   `GET /countries/region/:regionName`: Obtener una lista de países dentro de una región específica.
+-   `GET /countries/:alpha3Code/summary`: Obtener un resumen de información sobre un país mediante su código alfa3.
 
 ### Controlador: rolController
 
@@ -92,7 +97,6 @@ Roles y Permisos
 -   `DELETE /admin-rol/role/:id`: Eliminar un rol por su ID.
 -   `DELETE /admin-rol/permiso/:id`: Eliminar un permiso por su ID.
 
-
 ### Controlador: sesionController
 
 #### Usuarios
@@ -114,6 +118,111 @@ Roles y Permisos
 -   `POST /send-message`: Enviar mensajes a WhatsApp.
 -   `POST /send-email`: Enviar mensajes al correo.
 -   `404`: Ruta no encontrada (Página no encontrada).
+
+#### Rutas para Encargado, Propietario e Inmueble
+
+##### Encargado
+
+-   `GET /api/inmuebles/encargado/`: Obtener todos los encargados.
+-   `GET /api/inmuebles/encargado/:id`: Obtener un encargado por su ID.
+-   `POST /api/inmuebles/encargado/`: Crear un nuevo encargado.
+-   `PUT /api/inmuebles/encargado/:id`: Actualizar un encargado por su ID.
+-   `DELETE /api/inmuebles/encargado/:id`: Eliminar un encargado por su ID.
+
+##### Propietario
+
+-   `GET /api/inmuebles/propietario/`: Obtener todos los propietarios.
+-   `GET /api/inmuebles/propietario/:id`: Obtener un propietario por su ID.
+-   `POST /api/inmuebles/propietario/`: Crear un nuevo propietario.
+-   `PUT /api/inmuebles/propietario/:id`: Actualizar un propietario por su ID.
+-   `DELETE /api/inmuebles/propietario/:id`: Eliminar un propietario por su ID.
+
+##### Inmueble
+
+-   `GET /api/inmuebles/inmueble/`: Obtener todos los inmuebles.
+-   `GET /api/inmuebles/inmueble/:id`: Obtener un inmueble por su ID.
+-   `POST /api/inmuebles/inmueble/`: Crear un nuevo inmueble.
+-   `PUT /api/inmuebles/inmueble/:id`: Actualizar un inmueble por su ID.
+-   `DELETE /api/inmuebles/inmueble/:id`: Eliminar un inmueble por su ID.
+
+#### Rutas para Ofertas
+
+##### Oferta
+
+-   `GET /api/ofertas/oferta/`: Obtener todas las ofertas.
+-   `GET /api/ofertas/oferta/:id`: Obtener una oferta por su ID.
+-   `POST /api/ofertas/oferta/`: Crear una nueva oferta.
+-   `PUT /api/ofertas/oferta/:id`: Actualizar una oferta por su ID.
+-   `DELETE /api/ofertas/oferta/:id`: Eliminar una oferta por su ID.
+
+##### Estado de Candidato
+
+-   `GET /api/ofertas/estado_candidato/`: Obtener todos los estados de candidato.
+-   `GET /api/ofertas/estado_candidato/:id`: Obtener un estado de candidato por su ID.
+-   `POST /api/ofertas/estado_candidato/`: Crear un nuevo estado de candidato.
+-   `PUT /api/ofertas/estado_candidato/:id`: Actualizar un estado de candidato por su ID.
+-   `DELETE /api/ofertas/estado_candidato/:id`: Eliminar un estado de candidato por su ID.
+
+##### Estado de Contrato
+
+-   `GET /api/ofertas/estado_contrato/`: Obtener todos los estados de contrato.
+-   `GET /api/ofertas/estado_contrato/:id`: Obtener un estado de contrato por su ID.
+-   `POST /api/ofertas/estado_contrato/`: Crear un nuevo estado de contrato.
+-   `PUT /api/ofertas/estado_contrato/:id`: Actualizar un estado de contrato por su ID.
+-   `DELETE /api/ofertas/estado_contrato/:id`: Eliminar un estado de contrato por su ID.
+
+##### Candidato
+
+-   `GET /api/ofertas/candidato/`: Obtener todos los candidatos.
+-   `GET /api/ofertas/candidato/:id`: Obtener un candidato por su ID.
+-   `GET /api/ofertas/candidato/oferta/:id`: Obtener candidatos por oferta.
+-   `POST /api/ofertas/candidato/`: Crear un nuevo candidato.
+-   `PUT /api/ofertas/candidato/:id`: Actualizar un candidato por su ID.
+-   `PUT /api/ofertas/candidato/add/:id`: Agregar un nuevo candidato.
+-   `PUT /api/ofertas/candidato/delete/:id`: Eliminar un candidato.
+-   `DELETE /api/ofertas/candidato/:id`: Eliminar un candidato por su ID.
+
+##### Contrato
+
+-   `GET /api/ofertas/contrato/`: Obtener todos los contratos.
+-   `GET /api/ofertas/contrato/:id`: Obtener un contrato por su ID.
+-   `POST /api/ofertas/contrato/`: Crear un nuevo contrato.
+-   `PUT /api/ofertas/contrato/:id`: Actualizar un contrato por su ID.
+-   `DELETE /api/ofertas/contrato/:id`: Eliminar un contrato por su ID.
+
+#### Rutas para Proveedores
+
+##### Calificación
+
+-   `GET /api/proveedores/calificacion/`: Obtener todas las calificaciones.
+-   `GET /api/proveedores/calificacion/:id`: Obtener una calificación por su ID.
+-   `POST /api/proveedores/calificacion/`: Crear una nueva calificación.
+-   `PUT /api/proveedores/calificacion/:id`: Actualizar una calificación por su ID.
+-   `DELETE /api/proveedores/calificacion/:id`: Eliminar una calificación por su ID.
+
+##### Categoría
+
+-   `GET /api/proveedores/categoria/`: Obtener todas las categorías.
+-   `GET /api/proveedores/categoria/:id`: Obtener una categoría por su ID.
+-   `POST /api/proveedores/categoria/`: Crear una nueva categoría.
+-   `PUT /api/proveedores/categoria/:id`: Actualizar una categoría por su ID.
+-   `DELETE /api/proveedores/categoria/:id`: Eliminar una categoría por su ID.
+
+##### Proveedor
+
+-   `GET /api/proveedores/proveedor/`: Obtener todos los proveedores.
+-   `GET /api/proveedores/proveedor/:id`: Obtener un proveedor por su ID.
+-   `POST /api/proveedores/proveedor/`: Crear un nuevo proveedor.
+-   `PUT /api/proveedores/proveedor/:id`: Actualizar un proveedor por su ID.
+-   `DELETE /api/proveedores/proveedor/:id`: Eliminar un proveedor por su ID.
+
+##### Servicios
+
+-   `GET /api/proveedores/servicios/`: Obtener todos los servicios.
+-   `GET /api/proveedores/servicios/:id`: Obtener un servicio por su ID.
+-   `POST /api/proveedores/servicios/`: Crear un nuevo servicio.
+-   `PUT /api/proveedores/servicios/:id`: Actualizar un servicio por su ID.
+-   `DELETE /api/proveedores/servicios/:id`: Eliminar un servicio por su ID.
 
 ## Autor
 

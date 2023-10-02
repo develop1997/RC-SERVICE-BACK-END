@@ -1,64 +1,72 @@
 const { ObjectId } = require("mongodb");
 const db = require("../../db/dbConfig");
 
-class Contracting_Controller {
-	getStatus(req, res, next) {
-		db.Contracting.find()
-			.populate("id_candidates")
-			.populate("id_contractingStatus")
-			.then((result) => {
-				res.status(200).json(result);
-			})
-			.catch((error) => {
-				res.status(500).json({ error: "Error al obtener Estados" });
-			})
-			.finally(() => next());
+class ContractingController {
+	async getStatus(req, res, next) {
+		try {
+			const result = await db.Contracting.find()
+				.populate("id_candidates")
+				.populate("id_contractingStatus");
+			res.status(200).json(result);
+		} catch (error) {
+			console.error("Error al obtener estados de contratación:", error);
+			res.status(500).json({
+				error: "Error al obtener estados de contratación",
+				err: error.message,
+			});
+		} finally {
+			next();
+		}
 	}
 
-	postStatus(req, res, next) {
-		const result = new db.Contracting(req.body);
-		result
-			.save()
-			.then((result) => res.status(201).json(result))
-			.catch((error) =>
-				res.status(500).json({ Error: "ERROR CON ESTADO ***" })
-			)
-			.finally(() => next());
+	async postStatus(req, res, next) {
+		try {
+			const result = await db.Contracting.create(req.body);
+			res.status(201).json(result);
+		} catch (error) {
+			console.error("Error al crear estado de contratación:", error);
+			res.status(500).json({
+				Error: "Error al crear estado de contratación",
+				err: error.message,
+			});
+		} finally {
+			next();
+		}
 	}
+
 	async getIdStatus(req, res, next) {
 		const id = req.params.id;
 		try {
-			const result = await db.Contracting.find({
-				_id: new ObjectId(id),
-			})
+			const result = await db.Contracting.findById(id)
 				.populate("id_candidates")
 				.populate("id_contractingStatus");
 			if (result) {
-				res.status(200).send(result);
+				res.status(200).json(result);
 			} else {
 				res.status(404).send(
 					"No se encontró ningún documento con el ID proporcionado."
 				);
 			}
 		} catch (error) {
-			console.log("error" + error);
+			console.error(
+				"Error al buscar estado de contratación por ID:",
+				error
+			);
 		} finally {
 			next();
 		}
 	}
-	async putStatus(req, res, next) {
-		const Update = req.body;
-		const id = req.params.id;
-		try {
-			const result = await db.Contracting.findOneAndUpdate(
-				{ _id: new ObjectId(id) },
-				Update,
-				{ new: true } // Para obtener el documento actualizado en lugar del antiguo
-			);
 
+	async putStatus(req, res, next) {
+		const id = req.params.id;
+		const update = req.body;
+		try {
+			const result = await db.Contracting.findByIdAndUpdate(id, update, {
+				new: true,
+			});
 			if (result) {
 				res.status(200).json({
-					message: "Documento actualizado exitosamente\n",
+					message: "Documento actualizado exitosamente",
 					result,
 				});
 			} else {
@@ -67,28 +75,33 @@ class Contracting_Controller {
 				});
 			}
 		} catch (error) {
-			console.log(error);
+			console.error(
+				"Error al actualizar estado de contratación:",
+				error.message
+			);
 		} finally {
 			next();
 		}
 	}
+
 	async deleteStatus(req, res, next) {
 		const id = req.params.id;
 		try {
-			const result = await db.Contracting.findOneAndDelete({
-				_id: new ObjectId(id),
-			});
-
+			const result = await db.Contracting.findByIdAndDelete(id);
 			if (result) {
-				res.status(200).send({ message: "Borrado con éxito", result });
+				res.status(200).json({ message: "Borrado con éxito", result });
 			} else {
-				res.status(500).send({ error: "Error al eliminar el archivo" });
+				res.status(500).json({ error: "Error al eliminar el archivo" });
 			}
 		} catch (error) {
-			console.log(error);
+			console.error(
+				"Error al eliminar estado de contratación:",
+				error.message
+			);
 		} finally {
 			next();
 		}
 	}
 }
-module.exports = Contracting_Controller;
+
+module.exports = ContractingController;

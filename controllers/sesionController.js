@@ -36,7 +36,7 @@ class sesionController {
 	}
 
 	// Route to get a user by their correo (email)
-	async getByCorreo(req, res) {
+	async getUserByEmail(req, res) {
 		try {
 			const user = await queries.getUserByCorreo(req.params.correo);
 			if (!user) {

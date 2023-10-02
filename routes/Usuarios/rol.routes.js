@@ -10,19 +10,19 @@ const router = express.Router();
 const Controller = new rolController();
 
 router.get("/roles", Controller.getRoles.bind());
-router.get("/permisos", Controller.getPermision.bind());
+router.get("/permisos", Controller.getPermissions.bind());
 router.get("/lista-roles-usuarios", Controller.getUserRolesList.bind());
-router.get("/permision/:id/users", Controller.getUsuariosWithPermision.bind());
+router.get("/permision/:id/users", Controller.getUsuariosWithPermission.bind());
 router.get(
 	"/lista-permisos-usuarios",
-	Controller.getUsuariosPermisosList.bind()
+	Controller.getUsuariosPermissionsList.bind()
 );
-router.post("/roles", validateRole, Controller.createRol.bind());
-router.post("/permisos", validatePermiso, Controller.createPermision.bind());
+router.post("/roles", validateRole, Controller.createRole.bind());
+router.post("/permisos", validatePermiso, Controller.createPermission.bind());
 router.post(
 	"/usuarios/:id_usuario/permisos/:id_permiso",
 	validateAssignPermisoToUser,
-	Controller.givePermisionToUser.bind()
+	Controller.givePermissionToUser.bind()
 );
 router.post(
 	"/usuarios/:id_usuario/roles/:roleId",
@@ -31,15 +31,22 @@ router.post(
 );
 router.delete(
 	"/usuarios/:userId/permisos/:permisoId",
-	Controller.removePermision.bind()
+	Controller.removePermission.bind()
 );
 router.delete("/usuarios/:userId/roles", Controller.revokeRoleFromUser.bind());
-router.get("/usuarios/:userId/permisos", Controller.getPermisosfromUser.bind());
-router.get("/role/:id", Controller.getRolByID.bind());
+router.get(
+	"/usuarios/:userId/permisos",
+	Controller.getPermissionsFromUser.bind()
+);
+router.get("/role/:id", Controller.getRoleByID.bind());
 router.put("/role/:id", validateRole, Controller.editRole.bind());
-router.get("/permision/:id", Controller.editPermision.bind());
-router.put("/permision/:id", validatePermiso, Controller.getPermisoByID.bind());
+router.get("/permision/:id", Controller.editPermission.bind());
+router.put(
+	"/permision/:id",
+	validatePermiso,
+	Controller.getPermissionByID.bind()
+);
 router.delete("/role/:id", Controller.deleteRole.bind());
-router.delete("/permiso/:id", Controller.deletePermision.bind());
+router.delete("/permiso/:id", Controller.deletePermission.bind());
 
 module.exports = router;

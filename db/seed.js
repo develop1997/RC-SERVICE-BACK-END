@@ -1,8 +1,9 @@
-/** @format */
 const db = require("./dbConfig");
 const mongoose = require("mongoose");
 
 async function seedDatabase() {
+	const Db = new db.DatabaseConnector();
+	Db.connect();
 	try {
 		// Crear permisos
 		const InmueblesPermission = await db.Permiso.create({
@@ -128,6 +129,8 @@ async function seedDatabase() {
 	} finally {
 		mongoose.disconnect();
 	}
+
+	Db.close();
 }
 
 seedDatabase();

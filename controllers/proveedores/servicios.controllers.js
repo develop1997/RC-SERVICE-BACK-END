@@ -4,15 +4,13 @@ const db = require("../../db/dbConfig");
 class ServiciosController {
 	async getServicios(req, res, next) {
 		try {
-			const result = await db.Servicios.find({}).populate(
+			const servicios = await db.Servicios.find({}).populate(
 				"Categoria_Servicio"
 			);
-
-			res.status(200).send(result);
+			res.status(200).send(servicios);
 		} catch (error) {
-			console.log(error);
-		} finally {
-			next();
+			console.error(error);
+			res.status(500).json({ error: "Error al obtener servicios" });
 		}
 	}
 
@@ -20,100 +18,90 @@ class ServiciosController {
 		const id = req.params.id;
 
 		try {
-			const result = await db.Servicios.find({
-				_id: new ObjectId(id),
-			}).populate("Categoria_Servicio");
+			const servicio = await db.Servicios.findById(id).populate(
+				"Categoria_Servicio"
+			);
 
-			res.status(200).send(result);
+			if (!servicio) {
+				return res
+					.status(404)
+					.json({ error: "Servicio no encontrado" });
+			}
+
+			res.status(200).json(servicio);
 		} catch (error) {
-			console.log("Error: " + error);
-		} finally {
-			next();
+			console.error("Error: " + error);
+			res.status(500).json({ error: "Error al obtener el servicio" });
 		}
 	}
-
-	//   ______________________________________________________________________________________
 
 	async postServicio(req, res, next) {
 		try {
-			const result = new db.Servicios(req.body);
-			await result.save();
+			const servicio = new db.Servicios(req.body);
+			await servicio.save();
 
-			res.status(200).json({ message: "Documento creado exitosamente" });
+			res.status(201).json({ message: "Servicio creado exitosamente" });
 		} catch (error) {
-			console.log(error);
-			res.status(500).json({ error: "Error al crear el documento" });
-		} finally {
-			next();
+			console.error(error);
+			res.status(500).json({ error: "Error al crear el servicio" });
 		}
 	}
-
-	//______________________________________________________________________________________
 
 	async putServicio(req, res, next) {
-		const Update = req.body;
 		const id = req.params.id;
+
 		try {
-			const result = await db.Servicios.findOneAndUpdate(
-				{ _id: new ObjectId(id) },
-				Update,
-				{ new: true } // Para obtener el documento actualizado en luxgar del antiguo
+			const updatedServicio = await db.Servicios.findByIdAndUpdate(
+				id,
+				req.body,
+				{
+					new: true,
+				}
 			);
 
-			if (result) {
-				res.status(200).json({
-					message: "Documento actualizado exitosamente\n",
-					result,
-				});
-			} else {
-				res.status(500).json({
-					error: "Error al actualizar el documento",
-				});
+			if (!updatedServicio) {
+				return res
+					.status(404)
+					.json({ error: "Servicio no encontrado" });
 			}
+
+			res.status(200).json({
+				message: "Servicio actualizado exitosamente",
+				Resultado: updatedServicio,
+			});
 		} catch (error) {
-			console.log(error);
-		} finally {
-			next();
+			console.error(error);
+			res.status(500).json({ error: "Error al actualizar el servicio" });
 		}
 	}
-
-	//______________________________________________________________________________________
 
 	async deleteServicio(req, res, next) {
 		const id = req.params.id;
 
 		try {
 			const reference = await db.Offers.find({
-				id_service: new ObjectId(id),
+				id_service: id,
 			});
 
-			console.log(reference);
-
 			if (reference.length > 0) {
-				res.status(500).send({
+				return res.status(400).json({
 					error:
-						"No se puede eliminar esta categoría, ya que se utiliza en otra parte.",
+						"No se puede eliminar este servicio, ya que se utiliza en otra parte.",
 				});
-			} else {
-				const result = await db.Servicios.findOneAndDelete({
-					_id: new ObjectId(id),
-				});
-
-				if (result) {
-					res.status(200).send({
-						message: "Servicio borrado con éxito",
-					});
-				} else {
-					res.status(500).send({
-						error: "Error al eliminar el servicio",
-					});
-				}
 			}
+
+			const result = await db.Servicios.findByIdAndDelete(id);
+
+			if (!result) {
+				return res
+					.status(404)
+					.json({ error: "Servicio no encontrado" });
+			}
+
+			res.status(200).json({ message: "Servicio eliminado con éxito" });
 		} catch (error) {
-			console.log("Error al eliminar el servicio -> " + error.message);
-			res.status(500).send({ error: "Error al eliminar el servicio" });
-		} finally {
-			next();
+			console.error("Error al eliminar el servicio -> " + error.message);
+			res.status(500).json({ error: "Error al eliminar el servicio" });
 		}
 	}
 }

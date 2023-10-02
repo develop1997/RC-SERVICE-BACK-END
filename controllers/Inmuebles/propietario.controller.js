@@ -1,19 +1,19 @@
 const { ObjectId } = require("mongodb");
 const db = require("../../db/dbConfig");
 
-class propietarioController {
-	getPropietario(req, res, next) {
-		db.Propietario.find({})
-			.then((result) => {
-				res.status(200).json(result);
-			})
-			.catch((error) => {
-				res.status(500).json({
-					error: "Error al obtener propietarios",
-				});
-			})
-			.finally(() => next());
+class PropietarioController {
+	async getPropietario(req, res, next) {
+		try {
+			const result = await db.Propietario.find({});
+			res.status(200).json(result);
+		} catch (error) {
+			console.error("Error al obtener propietarios:", error);
+			res.status(500).json({ error: "Error al obtener propietarios" });
+		} finally {
+			next();
+		}
 	}
+
 	async getIdPropietario(req, res, next) {
 		const id = req.params.id;
 		try {
@@ -21,34 +21,34 @@ class propietarioController {
 				_id: new ObjectId(id),
 			});
 			if (result) {
-				res.status(200).send(result);
+				res.status(200).json(result);
 			} else {
 				res.status(404).send(
-					"No se encontro ningun coso en el ID ingresado "
+					"No se encontró ningún documento con el ID proporcionado."
 				);
 			}
 		} catch (error) {
-			console.log("error" + error);
+			console.error("Error al buscar por ID:", error);
 		} finally {
 			next();
 		}
 	}
-	postPropietario(req, res, next) {
+
+	async postPropietario(req, res, next) {
 		const result = new db.Propietario(req.body);
-		result
-			.save()
-			.then((result) => res.status(201).json(result))
-			.catch((error) =>
-				res.status(500).json({
-					error: "Error al injectar un propietario ",
-				})
-			)
-			.finally(() => next());
+		try {
+			const savedResult = await result.save();
+			res.status(201).json(savedResult);
+		} catch (error) {
+			console.error("Error al insertar un propietario:", error);
+			res.status(500).json({ error: "Error al insertar un propietario" });
+		} finally {
+			next();
+		}
 	}
 
 	async putPropietario(req, res, next) {
 		const id = req.params.id;
-
 		try {
 			const result = await db.Propietario.findOneAndUpdate(
 				{ _id: new ObjectId(id) },
@@ -56,12 +56,17 @@ class propietarioController {
 				{ new: true }
 			);
 			if (result) {
-				res.status(200).json({ melo: "Documnto actualizado ", result });
+				res.status(200).json({
+					message: "Documento actualizado exitosamente",
+					result,
+				});
 			} else {
-				res.status(500).json({ error: "Error al actualizar" });
+				res.status(500).json({
+					error: "Error al actualizar el documento",
+				});
 			}
 		} catch (error) {
-			console.log(error);
+			console.error("Error al actualizar el documento:", error);
 		} finally {
 			next();
 		}
@@ -69,12 +74,10 @@ class propietarioController {
 
 	async deletePropietario(req, res, next) {
 		const id = req.params.id;
-
 		try {
 			const reference = await db.Inmueble.find({
 				id_propietario: new ObjectId(id),
 			});
-			console.log(reference);
 			if (reference.length > 0) {
 				res.status(500).send({
 					error:
@@ -90,13 +93,12 @@ class propietarioController {
 				});
 			}
 		} catch (error) {
-			console.log("Error al eliminar el documento -> " + error.message);
-			res.status(500).send({
-				error: "error.",
-			});
+			console.error("Error al eliminar el documento:", error);
+			res.status(500).send({ error: "Error al eliminar el documento." });
 		} finally {
 			next();
 		}
 	}
 }
-module.exports = propietarioController;
+
+module.exports = PropietarioController;

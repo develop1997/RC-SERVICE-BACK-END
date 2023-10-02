@@ -2,26 +2,29 @@ const { ObjectId } = require("mongodb");
 const db = require("../../db/dbConfig");
 
 class EncargadoControllers {
-	getEncargado(req, res, next) {
-		db.Encargado.find({})
-			.then((result) => {
-				res.status(200).json(result);
-			})
-			.catch((error) => {
-				res.status(500).json({ error: "Erro al obtener datos" });
-			})
-			.finally(() => next());
+	async getEncargado(req, res, next) {
+		try {
+			const result = await db.Encargado.find({});
+			res.status(200).json(result);
+		} catch (error) {
+			console.error("Error al obtener datos:", error);
+			res.status(500).json({ error: "Error al obtener datos" });
+		} finally {
+			next();
+		}
 	}
 
-	postEncargado(req, res, next) {
+	async postEncargado(req, res, next) {
 		const result = new db.Encargado(req.body);
-		result
-			.save()
-			.then((result) => res.status(200).json(result))
-			.catch((error) =>
-				res.status(500).json({ error: "Error al insertar" })
-			)
-			.finally(() => next());
+		try {
+			const savedResult = await result.save();
+			res.status(200).json(savedResult);
+		} catch (error) {
+			console.error("Error al insertar:", error);
+			res.status(500).json({ error: "Error al insertar" });
+		} finally {
+			next();
+		}
 	}
 
 	async getIdEncargado(req, res, next) {
@@ -33,28 +36,28 @@ class EncargadoControllers {
 			if (result) {
 				res.status(200).send(result);
 			} else {
-				res.status(404).send("No se encontro nada en el ID ingresado");
+				res.status(404).send("No se encontró nada en el ID ingresado");
 			}
 		} catch (error) {
-			console.log("error" + error);
+			console.error("Error al buscar por ID:", error);
 		} finally {
 			next();
 		}
 	}
 
 	async putEncargado(req, res, next) {
-		const update = req.body;
 		const id = req.params.id;
+		const update = req.body;
 
 		try {
 			const result = await db.Encargado.findOneAndUpdate(
 				{ _id: new ObjectId(id) },
-				req.body,
+				update,
 				{ new: true }
 			);
 			if (result) {
 				res.status(200).json({
-					message: "Documento actualizado con exito",
+					message: "Documento actualizado con éxito",
 					result,
 				});
 			} else {
@@ -63,7 +66,7 @@ class EncargadoControllers {
 				});
 			}
 		} catch (error) {
-			console.log(error);
+			console.error("Error al actualizar documento:", error);
 		} finally {
 			next();
 		}
@@ -73,11 +76,11 @@ class EncargadoControllers {
 		const id = req.params.id;
 
 		try {
-			const reference = await db.Encargado.find({
-				id_encargado: new ObjectId(id),
+			const reference = await db.Encargado.findOne({
+				_id: new ObjectId(id),
 			});
-			console.log(reference);
-			if (reference.length > 0) {
+
+			if (reference) {
 				res.status(500).send({
 					error:
 						"No se puede eliminar este documento, ya que se utiliza en otra parte.",
@@ -92,9 +95,9 @@ class EncargadoControllers {
 				});
 			}
 		} catch (error) {
-			console.log("Error al eliminar el documento -> " + error.message);
+			console.error("Error al eliminar el documento:", error);
 			res.status(500).send({
-				error: "error.",
+				error: "Error al eliminar el documento.",
 			});
 		} finally {
 			next();

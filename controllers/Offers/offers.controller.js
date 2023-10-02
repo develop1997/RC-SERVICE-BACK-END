@@ -2,66 +2,68 @@ const { ObjectId } = require("mongodb");
 const db = require("../../db/dbConfig");
 
 class OffersControllers {
-	getStatus(req, res, next) {
-		db.Offers.find()
-			.populate("id_property")
-			.populate("id_service")
-			.then((result) => {
-				res.status(200).json(result);
-			})
-			.catch((error) => {
-				res.status(500).json({ error: "Error al obtener Ofertas" });
-			})
-			.finally(() => next());
+	async getStatus(req, res, next) {
+		try {
+			const result = await db.Offers.find()
+				.populate("id_property")
+				.populate("id_service");
+			res.status(200).json(result);
+		} catch (error) {
+			console.error("Error al obtener Ofertas:", error);
+			res.status(500).json({
+				error: "Error al obtener Ofertas",
+				err: error.message,
+			});
+		} finally {
+			next();
+		}
 	}
 
-	postStatus(req, res, next) {
-		const result = new db.Offers(req.body);
-		result
-			.save()
-			.then((result) => res.status(201).json(result))
-			.catch((error) =>
-				res.status(500).json({
-					Error: "*** Error al Ingresar datos *** >>>",
-					err: error,
-				})
-			)
-			.finally(() => next());
+	async postStatus(req, res, next) {
+		try {
+			const result = await db.Offers.create(req.body);
+			res.status(201).json(result);
+		} catch (error) {
+			console.error("Error al ingresar datos:", error);
+			res.status(500).json({
+				Error: "Error al ingresar datos",
+				err: error.message,
+			});
+		} finally {
+			next();
+		}
 	}
+
 	async getIdStatus(req, res, next) {
 		const id = req.params.id;
 		try {
-			const result = await db.Offers.find({
-				_id: new ObjectId(id),
-			})
+			const result = await db.Offers.findById(id)
 				.populate("id_property")
 				.populate("id_service");
 			if (result) {
-				res.status(200).send(result);
+				res.status(200).json(result);
 			} else {
 				res.status(404).send(
 					"No se encontró ningún documento con el ID proporcionado."
 				);
 			}
 		} catch (error) {
-			console.log("Error al Obtener Datos por 'ID' >>>" + error.message);
+			console.error("Error al obtener datos por 'ID':", error.message);
 		} finally {
 			next();
 		}
 	}
-	async putStatus(req, res, next) {
-		const Update = req.body;
-		const id = req.params.id;
-		try {
-			const result = await db.Offers.findOneAndUpdate(
-				{ _id: new ObjectId(id) },
-				Update,
-				{ new: true } // Para obtener el documento actualizado en lugar del antiguo
-			);
 
+	async putStatus(req, res, next) {
+		const id = req.params.id;
+		const update = req.body;
+		try {
+			const result = await db.Offers.findByIdAndUpdate(id, update, {
+				new: true,
+			});
 			if (result) {
 				res.status(200).json({
-					message: "Documento actualizado exitosamente\n",
+					message: "Documento actualizado exitosamente",
 					result,
 				});
 			} else {
@@ -70,42 +72,38 @@ class OffersControllers {
 				});
 			}
 		} catch (error) {
-			console.log(error.message);
+			console.error("Error al actualizar documento:", error.message);
 		} finally {
 			next();
 		}
 	}
+
 	async deleteStatus(req, res, next) {
 		const id = req.params.id;
-
 		try {
-			const reference = await db.Candidate.find({
-				id_offers: new ObjectId(id),
-			});
+			const reference = await db.Candidate.findOne({ id_offers: id });
 			console.log(reference);
-			if (reference.length > 0) {
+			if (reference) {
 				res.status(500).send({
 					error:
-						"No se puede eliminar este documento, ya que se utiliza en otra parte. ",
+						"No se puede eliminar este documento, ya que se utiliza en otra parte.",
 				});
 			} else {
-				const result = await db.Offers.findOneAndDelete({
-					_id: new ObjectId(id),
-				});
-
-				res.status(200).send({
+				const result = await db.Offers.findByIdAndDelete(id);
+				res.status(200).json({
 					message: "Borrado con éxito",
 					Result: result,
 				});
 			}
 		} catch (error) {
-			console.log("Error al eliminar el documento -> " + error.message);
-			res.status(500).send({
-				error: "error.",
+			console.error("Error al eliminar el documento:", error.message);
+			res.status(500).json({
+				error: "error",
 			});
 		} finally {
 			next();
 		}
 	}
 }
+
 module.exports = OffersControllers;

@@ -9,6 +9,7 @@ const countriesRoutes = require("./routes/Ciudades/ciudades.routes");
 const { enviarMensajeWhatsapp, enviarCorreo } = require("./InfoSender");
 const { userExists } = require("./validations/userValidations");
 const { connect, disconnect, notFound } = require("./middlewares");
+const route = require("./routes/");
 
 //MIDLEWARES
 app.use(connect);
@@ -27,8 +28,6 @@ app.use("/countries", countriesRoutes);
 
 // Use role controller for /admin-rol routes
 app.use("/admin-rol", rolRoutes);
-
-const route = require("./routes/");
 
 app.use("/api", route);
 

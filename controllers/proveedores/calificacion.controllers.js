@@ -5,10 +5,9 @@ class CalificacionesController {
 	async getCalificaciones(req, res, next) {
 		try {
 			const result = await db.Calificacion.find({});
-
 			res.status(200).send(result);
 		} catch (error) {
-			console.log(error);
+			console.error(error);
 			res.status(500).json({
 				error: "Error al obtener las calificaciones",
 			});
@@ -17,73 +16,69 @@ class CalificacionesController {
 		}
 	}
 
-	//__________________________________________________________________________________________
-
 	async getCalificacionPorId(req, res, next) {
 		const id = req.params.id;
 		try {
-			const result = await db.Calificacion.find({
+			const result = await db.Calificacion.findOne({
 				_id: new ObjectId(id),
 			});
 
+			if (!result) {
+				return res
+					.status(404)
+					.json({ error: "Calificación no encontrada" });
+			}
+
 			res.status(200).send(result);
 		} catch (error) {
-			console.log("Error: " + error);
+			console.error(error);
 			res.status(500).json({ error: "Error al obtener la calificación" });
 		} finally {
 			next();
 		}
 	}
 
-	//__________________________________________________________________________________________
-
 	async postCalificacion(req, res, next) {
 		try {
-			const result = new db.Calificacion(req.body);
-			await result.save();
+			const newCalificacion = new db.Calificacion(req.body);
+			await newCalificacion.save();
 
-			if (result) {
-				res.status(200).json({
-					message: "Calificación creada exitosamente",
-				});
-			} else {
-				res.status(500).json({
-					error: "Error al crear la calificación",
-				});
-			}
+			res.status(201).json({
+				message: "Calificación creada exitosamente",
+			});
 		} catch (error) {
-			console.log(error);
+			console.error(error);
 			res.status(500).json({ error: "Error al crear la calificación" });
 		} finally {
 			next();
 		}
 	}
 
-	//__________________________________________________________________________________________
 	async putCalificacion(req, res, next) {
-		const { Comentarios, CalificacionesFloat } = req.body;
 		const id = req.params.id;
+		const { Comentarios, CalificacionesFloat } = req.body;
 		try {
 			const result = await db.Calificacion.updateOne(
 				{ _id: new ObjectId(id) },
 				{
 					$set: {
-						Comentarios: Comentarios,
-						CalificacionesFloat: CalificacionesFloat,
+						Comentarios,
+						CalificacionesFloat,
 					},
 				}
 			);
+
 			if (result.modifiedCount === 1) {
 				res.status(200).json({
 					message: "Calificación actualizada exitosamente",
 				});
 			} else {
-				res.status(500).json({
-					error: "Error al actualizar la calificación",
+				res.status(404).json({
+					error: "Calificación no encontrada",
 				});
 			}
 		} catch (error) {
-			console.log(error);
+			console.error(error);
 			res.status(500).json({
 				error: "Error al actualizar la calificación",
 			});
@@ -92,8 +87,6 @@ class CalificacionesController {
 		}
 	}
 
-	//__________________________________________________________________________________________
-
 	async deleteCalificacion(req, res, next) {
 		const id = req.params.id;
 		try {
@@ -101,18 +94,18 @@ class CalificacionesController {
 				_id: new ObjectId(id),
 			});
 
-			if (result) {
+			if (result.deletedCount === 1) {
 				res.status(200).send({
-					message: "Calificación borrada con éxito",
+					message: "Calificación eliminada con éxito",
 				});
 			} else {
-				res.status(500).send({
-					error: "Error al eliminar la calificación",
+				res.status(404).json({
+					error: "Calificación no encontrada",
 				});
 			}
 		} catch (error) {
-			console.log(error);
-			res.status(500).send({
+			console.error(error);
+			res.status(500).json({
 				error: "Error al eliminar la calificación",
 			});
 		} finally {

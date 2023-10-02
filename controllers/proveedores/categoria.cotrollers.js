@@ -2,124 +2,119 @@ const { ObjectId } = require("mongodb");
 const db = require("../../db/dbConfig");
 
 class CategoriasController {
-	getCategorias(req, res, next) {
-		db.Categoria.find({})
-			.then((result) => {
-				res.status(200).send(result);
-			})
-			.catch((error) => {
-				res.status(500).json({ error: "Error al obtener Cartegorias" });
-			})
-			.finally(() => next());
+	async getCategorias(req, res, next) {
+		try {
+			const categorias = await db.Categoria.find({});
+			res.status(200).send(categorias);
+		} catch (error) {
+			console.error(error);
+			res.status(500).json({ error: "Error al obtener categorías" });
+		} finally {
+			next();
+		}
 	}
-
-	// //__________________________________________________________________________________________
 
 	async getCategoriaPorId(req, res, next) {
 		const id = req.params.id;
 
 		try {
-			const result = await db.Categoria.find({
-				_id: new ObjectId(id),
-			});
+			const categoria = await db.Categoria.findById(id);
 
-			res.status(200).send(result);
+			if (!categoria) {
+				return res
+					.status(404)
+					.json({ error: "Categoría no encontrada" });
+			}
+
+			res.status(200).send(categoria);
 		} catch (error) {
-			console.log("Error: " + error);
+			console.error("Error: " + error);
 			res.status(500).json({ error: "Error al obtener la categoría" });
 		} finally {
 			next();
 		}
 	}
 
-	//__________________________________________________________________________________________
-
 	async postCategoria(req, res, next) {
 		const { Nombre_Categoria, Descripcion, Estado } = req.body;
+
 		try {
 			const categoria = new db.Categoria({
-				Nombre_Categoria: Nombre_Categoria,
-				Descripcion: Descripcion,
-				Estado: Estado,
+				Nombre_Categoria,
+				Descripcion,
+				Estado,
 			});
 
 			const result = await categoria.save();
 
-			res.status(200).json({
+			res.status(201).json({
 				message: "Categoría creada exitosamente",
 				Resultado: result,
 			});
 		} catch (error) {
-			console.log(error);
+			console.error(error);
 			res.status(500).json({ error: "Error al crear la categoría" });
 		} finally {
 			next();
 		}
 	}
 
-	//__________________________________________________________________________________________
-
 	async putCategoria(req, res, next) {
 		const id = req.params.id;
-		const collection = "categoria";
+
 		try {
-			const result = await db.Categoria.updateOne(
-				{ _id: new ObjectId(id) },
-				{
-					$set: req.body,
-				}
+			const updatedCategoria = await db.Categoria.findByIdAndUpdate(
+				id,
+				req.body,
+				{ new: true }
 			);
-			if (result.modifiedCount === 1) {
-				res.status(200).json({
-					message: "Categoría actualizada exitosamente",
-				});
-			} else {
-				res.status(500).json({
-					error: "Error al actualizar la categoría",
-				});
+
+			if (!updatedCategoria) {
+				return res
+					.status(404)
+					.json({ error: "Categoría no encontrada" });
 			}
+
+			res.status(200).json({
+				message: "Categoría actualizada exitosamente",
+				Resultado: updatedCategoria,
+			});
 		} catch (error) {
-			console.log(error);
+			console.error(error);
 			res.status(500).json({ error: "Error al actualizar la categoría" });
 		} finally {
 			next();
 		}
 	}
 
-	//__________________________________________________________________________________________
-
 	async deleteCategoria(req, res, next) {
 		const id = req.params.id;
 
 		try {
-			const reference = await db.Servicio.find({
-				Categoria_Servicio: new ObjectId(id),
+			const reference = await db.Servicio.findOne({
+				Categoria_Servicio: id,
 			});
 
-			console.log(reference);
-
-			if (reference.length > 0) {
-				res.status(500).send({
+			if (reference) {
+				return res.status(500).send({
 					error:
 						"No se puede eliminar esta categoría, ya que se utiliza en otra parte.",
 				});
-			} else {
-				const result = await db.Categoria.findOneAndDelete({
-					_id: new ObjectId(id),
-				});
-
-				if (result) {
-					res.status(200).send({
-						message: "Categoría borrada con éxito",
-					});
-				} else {
-					res.status(500).send({
-						error: "Error al eliminar la categoría",
-					});
-				}
 			}
+
+			const deletedCategoria = await db.Categoria.findByIdAndDelete(id);
+
+			if (!deletedCategoria) {
+				return res
+					.status(404)
+					.json({ error: "Categoría no encontrada" });
+			}
+
+			res.status(200).json({
+				message: "Categoría borrada con éxito",
+			});
 		} catch (error) {
-			console.log("Error al eliminar la categoría -> " + error.message);
+			console.error("Error al eliminar la categoría -> " + error.message);
 			res.status(500).send({ error: "Error al eliminar la categoría" });
 		} finally {
 			next();

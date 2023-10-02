@@ -18,7 +18,15 @@ class DatabaseConnector {
 				console.error("Error al conectar a la base de datos:", error);
 				res.status(500).send({ error: "Error en el servidor" });
 			})
-			.finally(() => next()); // continuar con la solicitud
+			.finally(() => {
+				try {
+					next();
+				} catch (error) {
+					console.log(
+						"no se puede continuar con la solicitud"
+					);
+				}
+			}); // continuar con la solicitud
 	}
 	close(req, res, next) {
 		mongoose.connection

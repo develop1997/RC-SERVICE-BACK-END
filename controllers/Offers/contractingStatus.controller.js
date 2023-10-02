@@ -1,62 +1,71 @@
 const { ObjectId } = require("mongodb");
 const db = require("../../db/dbConfig");
 
-class ContractingStatus_Controller {
-	getStatus(req, res, next) {
-		db.ContractingStatus.find()
-			.then((result) => {
-				res.status(200).json(result);
-			})
-			.catch((error) => {
-				res.status(500).json({
-					error: "Error al obtener estados de contrato",
-					err: error.message,
-				});
-			})
-			.finally(() => next());
-	}
-
-	postStatus(req, res, next) {
-		const { name, description } = req.body;
-
-		const result = new db.ContractingStatus({
-			name,
-			description,
-		});
-		result
-			.save()
-			.then((result) => res.status(201).json(result))
-			.catch((error) =>
-				res.status(500).json({
-					Error: "error-> estado de Contrato ***",
-					err: error.message,
-				})
-			)
-			.finally(() => next());
-	}
-	async getIdStatus(req, res, next) {
-		const id = req.params.id;
+class ContractingStatusController {
+	async getStatus(req, res, next) {
 		try {
-			const result = await db.ContractingStatus.find({
-				_id: new ObjectId(id),
-			});
-			res.status(200).send(result);
+			const result = await db.ContractingStatus.find();
+			res.status(200).json(result);
 		} catch (error) {
-			console.log("*** El Error es: ***" + error.message);
+			console.error("Error al obtener estados de contrato:", error);
+			res.status(500).json({
+				error: "Error al obtener estados de contrato",
+				err: error.message,
+			});
 		} finally {
 			next();
 		}
 	}
-	async putStatus(req, res, next) {
-		const Update = req.body;
+
+	async postStatus(req, res, next) {
+		try {
+			const { name, description } = req.body;
+			const result = await db.ContractingStatus.create({
+				name,
+				description,
+			});
+			res.status(201).json(result);
+		} catch (error) {
+			console.error("Error al crear estado de contrato:", error);
+			res.status(500).json({
+				Error: "Error al crear estado de contrato",
+				err: error.message,
+			});
+		} finally {
+			next();
+		}
+	}
+
+	async getIdStatus(req, res, next) {
 		const id = req.params.id;
 		try {
-			const result = await db.ContractingStatus.findOneAndUpdate(
-				{ _id: new ObjectId(id) },
-				Update,
-				{ new: true } // Para obtener el documento actualizado en lugar del antiguo
+			const result = await db.ContractingStatus.findById(id);
+			if (result) {
+				res.status(200).json(result);
+			} else {
+				res.status(404).send(
+					"No se encontró ningún documento con el ID proporcionado."
+				);
+			}
+		} catch (error) {
+			console.error(
+				"Error al buscar estado de contrato por ID:",
+				error.message
 			);
+		} finally {
+			next();
+		}
+	}
 
+	async putStatus(req, res, next) {
+		const id = req.params.id;
+		const update = req.body;
+		try {
+			const result = await db.ContractingStatus.findByIdAndUpdate(
+				id,
+				update,
+				{ new: true }
+			);
 			if (result) {
 				res.status(200).json({
 					message: "Documento actualizado exitosamente",
@@ -68,17 +77,20 @@ class ContractingStatus_Controller {
 				});
 			}
 		} catch (error) {
-			console.log("Error -> " + error.message);
+			console.error(
+				"Error al actualizar estado de contrato:",
+				error.message
+			);
 		} finally {
 			next();
 		}
 	}
+
 	async deleteStatus(req, res, next) {
 		const id = req.params.id;
-
 		try {
 			const reference = await db.Contracting.find({
-				id_contractingStatus: new ObjectId(id),
+				id_contractingStatus: id,
 			});
 			console.log(reference);
 			if (reference.length > 0) {
@@ -87,22 +99,24 @@ class ContractingStatus_Controller {
 						"No se puede eliminar este documento, ya que se utiliza en otra parte.",
 				});
 			} else {
-				const result = await db.ContractingStatus.findOneAndDelete({
-					_id: new ObjectId(id),
-				});
-				res.status(200).send({
+				const result = await db.ContractingStatus.findByIdAndDelete(id);
+				res.status(200).json({
 					message: "Borrado con éxito",
 					Result: result,
 				});
 			}
 		} catch (error) {
-			console.log("Error al eliminar el documento -> " + error.message);
-			res.status(500).send({
-				error: "error.",
+			console.error(
+				"Error al eliminar estado de contrato:",
+				error.message
+			);
+			res.status(500).json({
+				error: "error",
 			});
 		} finally {
 			next();
 		}
 	}
 }
-module.exports = ContractingStatus_Controller;
+
+module.exports = ContractingStatusController;

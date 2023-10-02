@@ -16,7 +16,7 @@ class rolController {
 	}
 
 	// Ruta para obtener todos los permisos
-	async getPermision(req, res) {
+	async getPermissions(req, res) {
 		try {
 			const permisos = await rolQueries.getAllPermisos();
 			res.status(200).json(permisos);
@@ -37,7 +37,7 @@ class rolController {
 		}
 	}
 
-	async getUsuariosWithPermision(req, res) {
+	async getUsuariosWithPermission(req, res) {
 		try {
 			const listaUsuarios = await rolQueries.getUsuariosFromPermiso(
 				req.params.id
@@ -49,7 +49,7 @@ class rolController {
 		}
 	}
 
-	async getUsuariosPermisosList(req, res) {
+	async getUsuariosPermissionsList(req, res) {
 		try {
 			const listaPermisosUsuarios = await rolQueries.getListaPermisosUsuarios();
 			res.status(200).json(listaPermisosUsuarios);
@@ -60,7 +60,7 @@ class rolController {
 	}
 
 	// Ruta para crear un nuevo rol
-	async createRol(req, res) {
+	async createRole(req, res) {
 		try {
 			let { rol, permisions } = req.body;
 			const newRole = await rolQueries.createRole(rol, permisions);
@@ -72,7 +72,7 @@ class rolController {
 	}
 
 	// Ruta para crear un nuevo permiso
-	async createPermision(req, res) {
+	async createPermission(req, res) {
 		try {
 			const newPermiso = await rolQueries.createPermiso(req.body);
 			res.status(201).json(newPermiso);
@@ -83,7 +83,7 @@ class rolController {
 	}
 
 	// Ruta para asignar un permiso a un usuario
-	async givePermisionToUser(req, res) {
+	async givePermissionToUser(req, res) {
 		try {
 			const rolesPermisos = await rolQueries.assignPermisoToUser(
 				req.params.id_usuario,
@@ -111,7 +111,7 @@ class rolController {
 	}
 
 	// Ruta para revocar un permiso de un usuario
-	async removePermision(req, res) {
+	async removePermission(req, res) {
 		try {
 			const deletedRolesPermisos = await rolQueries.revokePermisoFromUser(
 				req.params.userId,
@@ -136,7 +136,7 @@ class rolController {
 	}
 
 	// Ruta para obtener todos los permisos de un usuario
-	async getPermisosfromUser(req, res) {
+	async getPermissionsFromUser(req, res) {
 		try {
 			const permisos = await rolQueries.getAllPermisosByUser(
 				req.params.userId
@@ -149,7 +149,7 @@ class rolController {
 	}
 
 	// Ruta para obtener rol por su id
-	async getRolByID(req, res) {
+	async getRoleByID(req, res) {
 		try {
 			const role = await rolQueries.getRoleById(req.params.id);
 			res.status(200).json(role);
@@ -175,7 +175,7 @@ class rolController {
 	}
 
 	// Ruta para obtener permiso por su id
-	async getPermisoByID(req, res) {
+	async getPermissionByID(req, res) {
 		try {
 			const role = await rolQueries.getpermisionById(req.params.id);
 			res.status(200).json(role);
@@ -186,7 +186,7 @@ class rolController {
 	}
 
 	// Ruta para editar un permiso
-	async editPermision(req, res) {
+	async editPermission(req, res) {
 		try {
 			const role = await rolQueries.updatepermisionById(
 				req.params.id,
@@ -215,7 +215,7 @@ class rolController {
 	}
 
 	// Route to delete a permision by their ID
-	async deletePermision(req, res) {
+	async deletePermission(req, res) {
 		try {
 			const deletedpermision = await rolQueries.deletePermision(
 				req.params.id
