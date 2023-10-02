@@ -27,5 +27,4 @@ function formatPhoneNumber(phoneNumber) {
 	return formattedNumber;
 }
 
-
 module.exports = { translateString, formatPhoneNumber };

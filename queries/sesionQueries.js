@@ -1,5 +1,3 @@
-/** @format */
-
 const db = require("../db/dbConfig");
 
 /** Create a new user and assign the Proveedor role and Ofertas permission */
@@ -143,4 +141,3 @@ module.exports = {
 	createUserwithRol,
 	updatePasswordByEmail,
 };
-

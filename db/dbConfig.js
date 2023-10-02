@@ -10,9 +10,7 @@ class DatabaseConnector {
 				useUnifiedTopology: true,
 			})
 			.then(() => {
-				console.log(
-					"\n*** Conexión a la base de datos establecida. ***\n\n"
-				);
+				console.log("Conexión establecida.");
 			})
 			.catch((error) => {
 				console.error("Error al conectar a la base de datos:", error);
@@ -22,9 +20,7 @@ class DatabaseConnector {
 				try {
 					next();
 				} catch (error) {
-					console.log(
-						"no se puede continuar con la solicitud"
-					);
+					console.log("no se puede continuar con la solicitud");
 				}
 			}); // continuar con la solicitud
 	}

@@ -1,7 +1,7 @@
 /** @format */
 
 const express = require("express");
-const { CORS } = require("./config/cors.config");
+const { CORS } = require("./config/cors.config"); // estas configuraciones no estan bien, es mejor directamente usar el paquete
 const app = express();
 const sesionRoutes = require("./routes/Usuarios/sesion.routes");
 const rolRoutes = require("./routes/Usuarios/rol.routes");
@@ -10,26 +10,10 @@ const { enviarMensajeWhatsapp, enviarCorreo } = require("./InfoSender");
 const { userExists } = require("./validations/userValidations");
 const { connect, disconnect, notFound } = require("./middlewares");
 const route = require("./routes/");
+const cors = require("cors");
 
-//MIDLEWARES
-app.use(connect);
-app.use((req, res, next) => {
-	res.removeHeader("X-Powered-By");
-	next();
-});
-app.use(CORS);
+app.use(cors());
 app.use(express.json());
-
-// Use session controller for /users routes
-app.use("/users", sesionRoutes);
-
-// Use countries controller for /countries routes
-app.use("/countries", countriesRoutes);
-
-// Use role controller for /admin-rol routes
-app.use("/admin-rol", rolRoutes);
-
-app.use("/api", route);
 
 // Welcome message for root endpoint
 app.get("/", (req, res) => {
@@ -38,6 +22,7 @@ app.get("/", (req, res) => {
 
 // Endpoint to send messages to WhatsApp
 app.post("/send-message", async (req, res) => {
+	console.log("xd");
 	const { phoneNumber, message } = req.body;
 	if (!phoneNumber || !message) {
 		return res.status(400).json({
@@ -81,6 +66,24 @@ app.post("/send-email", async (req, res) => {
 		});
 	}
 });
+
+//MIDLEWARES
+app.use(connect);
+app.use((req, res, next) => {
+	res.removeHeader("X-Powered-By");
+	next();
+});
+
+// Use session controller for /users routes
+app.use("/users", sesionRoutes);
+
+// Use countries controller for /countries routes
+app.use("/countries", countriesRoutes);
+
+// Use role controller for /admin-rol routes
+app.use("/admin-rol", rolRoutes);
+
+app.use("/api", route);
 
 app.use(disconnect);
 app.use(notFound);
