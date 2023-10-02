@@ -1,31 +1,36 @@
 /** @format */
 
 const express = require("express");
-const db = require("./db/dbConfig");
-const cors = require("cors");
+const { CORS } = require("./config/cors.config");
 const app = express();
-const sesionController = require("./controllers/sesionController");
-const rolController = require("./controllers/rolController");
-const countriesController = require("./controllers/coutriesController");
+const sesionRoutes = require("./routes/Usuarios/sesion.routes");
+const rolRoutes = require("./routes/Usuarios/rol.routes");
+const countriesRoutes = require("./routes/Ciudades/ciudades.routes");
 const { enviarMensajeWhatsapp, enviarCorreo } = require("./InfoSender");
+const { userExists } = require("./validations/userValidations");
+const { connect, disconnect, notFound } = require("./middlewares");
 
-// Middleware to remove "X-Powered-By" header
+//MIDLEWARES
+app.use(connect);
 app.use((req, res, next) => {
 	res.removeHeader("X-Powered-By");
 	next();
 });
-
-app.use(cors());
+app.use(CORS);
 app.use(express.json());
 
 // Use session controller for /users routes
-app.use("/users", sesionController);
+app.use("/users", sesionRoutes);
 
 // Use countries controller for /countries routes
-app.use("/countries", countriesController);
+app.use("/countries", countriesRoutes);
 
 // Use role controller for /admin-rol routes
-app.use("/admin-rol", rolController);
+app.use("/admin-rol", rolRoutes);
+
+const route = require("./routes/");
+
+app.use("/api", route);
 
 // Welcome message for root endpoint
 app.get("/", (req, res) => {
@@ -57,13 +62,11 @@ app.post("/send-email", async (req, res) => {
 	const { email, titulo, message } = req.body;
 	if (!email || !titulo || !message) {
 		return res.status(400).json({
-			error: "Faltan datos, debe enviarse el correo, el titulo y el mensaje",
+			error:
+				"Faltan datos, debe enviarse el correo, el titulo y el mensaje",
 		});
 	}
-
-	let user = await db.User.findOne({ correo: email });
-
-	if (user) {
+	if (userExists(email)) {
 		let sent = await enviarCorreo(email, message, titulo);
 
 		if (sent) {
@@ -80,9 +83,7 @@ app.post("/send-email", async (req, res) => {
 	}
 });
 
-// 404 Route
-app.use((req, res, next) => {
-	res.status(404).send("404 Ruta no encontrada");
-});
+app.use(disconnect);
+app.use(notFound);
 
 module.exports = app;

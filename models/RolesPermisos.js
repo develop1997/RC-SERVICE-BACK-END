@@ -1,20 +1,25 @@
-/** @format */
+const { Schema, model } = require("mongoose");
+const Role = require("./Role");
+const Permiso = require("./Permiso");
 
-const mongoose = require("mongoose");
-
-const rolesPermisosSchema = new mongoose.Schema({
-	id_rol: {
-		type: mongoose.Schema.Types.ObjectId,
-		ref: "Role",
-		required: true,
+const rolesPermisosSchema = new Schema(
+	{
+		id_rol: {
+			type: Schema.Types.ObjectId,
+			ref: Role.modelName,
+			required: true,
+		},
+		id_permiso: {
+			type: Schema.Types.ObjectId,
+			ref: Permiso.modelName,
+			required: true,
+		},
 	},
-	id_permiso: {
-		type: mongoose.Schema.Types.ObjectId,
-		ref: "Permiso",
-		required: true,
-	},
-});
+	{
+		versionKey: false, // __v: 0
+	}
+);
 
-const RolesPermisos = mongoose.model("RolesPermiso", rolesPermisosSchema);
+const RolesPermisos = model("RolesPermiso", rolesPermisosSchema);
 
 module.exports = RolesPermisos;

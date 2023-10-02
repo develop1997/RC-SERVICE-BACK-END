@@ -1,15 +1,18 @@
-/** @format */
+const { Schema, model } = require("mongoose");
 
-const mongoose = require("mongoose");
-
-const permisoSchema = new mongoose.Schema({
-	permiso: {
-		type: String,
-		required: true,
-		unique: true,
+const permisoSchema = new Schema(
+	{
+		permiso: {
+			type: String,
+			required: true,
+			unique: true,
+		},
 	},
-});
+	{
+		versionKey: false, // __v: 0
+	}
+);
 
-const Permiso = mongoose.model("Permiso", permisoSchema);
+const Permiso = model("Permiso", permisoSchema);
 
 module.exports = Permiso;

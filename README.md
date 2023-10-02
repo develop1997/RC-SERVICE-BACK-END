@@ -4,6 +4,20 @@
 
 Este es un proyecto que usa Node.js, Express, MongoDB y otras dependencias para crear una aplicación web.
 
+# Notas de brandon
+
+# Notas de Dufainer
+
+# Notas Cristian
+
+
+
+## Errores
+
+-
+
+
+
 ## Instalación
 
 Para instalar las dependencias del proyecto, ejecuta el siguiente comando:

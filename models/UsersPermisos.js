@@ -1,20 +1,25 @@
-/** @format */
+const { Schema, model } = require("mongoose");
+const Permiso = require("./Permiso");
+const User = require("./User");
 
-const mongoose = require("mongoose");
-
-const usersPermisosSchema = new mongoose.Schema({
-	id_usuario: {
-		type: mongoose.Schema.Types.ObjectId,
-		ref: "User",
-		required: true,
+const usersPermisosSchema = new Schema(
+	{
+		id_usuario: {
+			type: Schema.Types.ObjectId,
+			ref: User.modelName,
+			required: true,
+		},
+		id_permiso: {
+			type: Schema.Types.ObjectId,
+			ref: Permiso.modelName,
+			required: true,
+		},
 	},
-	id_permiso: {
-		type: mongoose.Schema.Types.ObjectId,
-		ref: "Permiso",
-		required: true,
-	},
-});
+	{
+		versionKey: false, // __v: 0
+	}
+);
 
-const UsersPermiso = mongoose.model("UsersPermiso", usersPermisosSchema);
+const UsersPermiso = model("UsersPermiso", usersPermisosSchema);
 
 module.exports = UsersPermiso;

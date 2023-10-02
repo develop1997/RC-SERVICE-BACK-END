@@ -1,24 +1,28 @@
-/** @format */
+const { Schema, model } = require("mongoose");
+const Role = require("./Role");
 
-const mongoose = require("mongoose");
+const userSchema = new Schema(
+	{
+		correo: {
+			type: String,
+			required: true,
+			unique: true,
+		},
+		contraseña: {
+			type: String,
+			required: true,
+		},
+		rol: {
+			type: Schema.Types.ObjectId,
+			ref: Role.modelName,
+			required: true,
+		},
+	},
+	{
+		versionKey: false, // __v: 0
+	}
+);
 
-const userSchema = new mongoose.Schema({
-	correo: {
-		type: String,
-		required: true,
-		unique: true,
-	},
-	contraseña: {
-		type: String,
-		required: true,
-	},
-	rol: {
-		type: mongoose.Schema.Types.ObjectId,
-		ref: "Role",
-		required: true,
-	},
-});
-
-const User = mongoose.model("User", userSchema);
+const User = model("User", userSchema);
 
 module.exports = User;
