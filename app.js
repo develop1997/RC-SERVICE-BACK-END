@@ -22,7 +22,6 @@ app.get("/", (req, res) => {
 
 // Endpoint to send messages to WhatsApp
 app.post("/send-message", async (req, res) => {
-	console.log("xd");
 	const { phoneNumber, message } = req.body;
 	if (!phoneNumber || !message) {
 		return res.status(400).json({
